@@ -60,7 +60,6 @@ class LaplacianScore():
 
         return self
 
-
     def _best_k_scores(self, k=5):
         """
         returns the indices of the best k attributes according to the score
@@ -75,7 +74,6 @@ class LaplacianScore():
             l= sorted(l,key=itemgetter(1), reverse=True)
             return [l[i][0] for i in range(k)]
 
-
     def fit_transform(self, X):
         """
         Selects the features and returns the dataset with only the k best ones
@@ -84,10 +82,9 @@ class LaplacianScore():
 
         self._fit_process(X)
         l = list(enumerate(self.scores_))
-        l= sorted(l, key=itemgetter(1), reverse=True)
+        l = sorted(l, key=itemgetter(1), reverse=True)
         lsel = [l[i][0] for i in range(self._k)]
         return X[:, lsel]
-
 
     def _fit_process(self, X):
         """
@@ -116,11 +113,11 @@ class LaplacianScore():
 
         qt = D.sum()
         for at in range(X.shape[1]):
-            Fr =  X[:,at]
+            Fr = X[:, at]
             Fr_hat = Fr - np.dot(np.dot(Fr,D)/qt, ones)
 
-            score1 = np.dot(np.dot(Fr_hat,L), Fr_hat)
-            score2 = np.dot(np.dot(Fr_hat,D), Fr_hat)
+            score1 = np.dot(np.dot(Fr_hat, L), Fr_hat)
+            score2 = np.dot(np.dot(Fr_hat, D), Fr_hat)
             self.scores_[at] = score1 / score2
 
 
