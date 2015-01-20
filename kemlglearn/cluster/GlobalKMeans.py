@@ -34,14 +34,18 @@ class GlobalKMeans(BaseEstimator,ClusterMixin,TransformerMixin):
 
     n_clusters: int
         maximum number of clusters to obtain
+    algorithm string
+        'classical' the classical algorithm
+        'bagirov' the Bagirov 2006 variant
 
     """
-    def __init__(self, n_clusters):
+    def __init__(self, n_clusters, algorithm='classical'):
         self.n_clusters = n_clusters
         self.cluster_centers_ = None
         self.labels_ = None
         self.cluster_sizes_ = None
         self.inertia_ = None
+        self.algorithm = algorithm
 
     def fit(self,X):
         """
@@ -50,7 +54,10 @@ class GlobalKMeans(BaseEstimator,ClusterMixin,TransformerMixin):
         :return:
         """
 
-        self.cluster_centers_, self.labels_, self.inertia_ = self._fit_process(X)
+        if self.algorithm == 'classical':
+            self.cluster_centers_, self.labels_, self.inertia_ = self._fit_process(X)
+        elif self.algorithm == 'bagirov':
+            self.cluster_centers_, self.labels_, self.inertia_ = self._fit_process_bagirov(X)
 
         return self
 
@@ -70,9 +77,36 @@ class GlobalKMeans(BaseEstimator,ClusterMixin,TransformerMixin):
                 clasif.append(-1)
         return clasif
 
+
     def _fit_process(self, X):
         """
-        Clusters using the global K-means algorithm
+        Classical global k-means algorithm
+
+        :param X:
+        :return:
+        """
+
+        # Compute the centroid of the dataset
+        centroids = sum(X)/X.shape[0]
+
+        centroids.shape = (1, X.shape[1])
+
+        for i in range(2, self.n_clusters+1):
+            mininertia = np.infty
+            for j in range(X.shape[0]):
+                newcentroids = np.vstack((centroids,X[j]))
+                km = KMeans(n_clusters=i, init=newcentroids, n_init=1)
+                km.fit(X)
+                if mininertia > km.inertia_:
+                    mininertia = km.inertia_
+                    bestkm = km
+            centroids = bestkm.cluster_centers_
+
+        return bestkm.cluster_centers_, bestkm.labels_, bestkm.inertia_
+
+    def _fit_process_bagirov(self, X):
+        """
+        Clusters using the global K-means algorithm Bagirov variation
         :param X:
         :return:
         """
@@ -90,7 +124,7 @@ class GlobalKMeans(BaseEstimator,ClusterMixin,TransformerMixin):
         # compute the distance of the examples to the centroids
         mindist = np.zeros(X.shape[0])
         for i in range(X.shape[0]):
-            mindist[i] = euclidean_distances(X[i], centroids[assignments[i]])[0]
+            mindist[i] = euclidean_distances(X[i], centroids[assignments[i]], squared=True)[0]
 
         for k in range(2, self.n_clusters+1):
             newCentroid = self._compute_next_centroid(X, centroids, assignments, mindist)
@@ -99,7 +133,7 @@ class GlobalKMeans(BaseEstimator,ClusterMixin,TransformerMixin):
             km.fit(X)
             assignments = km.labels_
             for i in range(X.shape[0]):
-                mindist[i] = euclidean_distances(X[i], centroids[assignments[i]])[0]
+                mindist[i] = euclidean_distances(X[i], centroids[assignments[i]], squared=True)[0]
 
         return km.cluster_centers_, km.labels_, km.inertia_
 
@@ -128,7 +162,7 @@ class GlobalKMeans(BaseEstimator,ClusterMixin,TransformerMixin):
 
         # Compute examples for the new centroid
         S2 = []
-        newDist = euclidean_distances(X, candCentroid)
+        newDist = euclidean_distances(X, candCentroid, squared=True)
         for i in range(X.shape[0]):
             if newDist[i] < mindist[i]:
                 S2.append(i)
@@ -139,7 +173,7 @@ class GlobalKMeans(BaseEstimator,ClusterMixin,TransformerMixin):
         while not (candCentroid == newCentroid).all():
             candCentroid = newCentroid
             S2 = []
-            newDist = euclidean_distances(X, candCentroid)
+            newDist = euclidean_distances(X, candCentroid, squared=True)
             for i in range(X.shape[0]):
                 if newDist[i] < mindist[i]:
                     S2.append(i)
@@ -161,7 +195,7 @@ class GlobalKMeans(BaseEstimator,ClusterMixin,TransformerMixin):
         """
 
         # Distances among the examples and the candidate centroid
-        centdist = euclidean_distances(X, ccentroid)
+        centdist = euclidean_distances(X, ccentroid, squared=True)
 
         fk = 0
         for i in range(X.shape[0]):
