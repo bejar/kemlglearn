@@ -34,7 +34,7 @@ from kemlglearn.metrics import within_scatter_matrix_score, between_scatter_matr
 #X = load_iris()['data']
 #X, y_data = make_circles(n_samples=1000, noise=0.5, random_state=4, factor=0.5)
 
-_, X = cluster_generator(n_clusters=7, sepval=0.05, numNonNoisy=15, numNoisy=3, rangeN=[200, 250])
+_, X = cluster_generator(n_clusters=8, sepval=0.01, numNonNoisy=15, numNoisy=3, rangeN=[200, 250])
 # ld = Leader(radius=25.0)
 #
 # #print timeit.timeit(stmt='ld.fit(X)',setup=setup,number=10)
@@ -69,11 +69,11 @@ _, X = cluster_generator(n_clusters=7, sepval=0.05, numNonNoisy=15, numNoisy=3, 
 # plt.scatter(X[:, 0], X[:, 1], c=gkm.labels_)
 #
 # plt.show()
-for nc in range(2,11):
+for nc in range(2, 16):
     km = KMeans(n_clusters=nc)
     km.fit(X)
     #print km.cluster_centers_.shape[0], km.inertia_
-    print nc, scatter_matrices_scores(X, km.labels_, ['CH', 'ZCF', 'Hartigan'])
+    print nc, scatter_matrices_scores(X, km.labels_, ['CH', 'ZCF', 'Hartigan', 'Xu'])
 
 # fig = plt.figure()
 #

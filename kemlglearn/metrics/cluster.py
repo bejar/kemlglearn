@@ -71,7 +71,10 @@ def scatter_matrices_scores(X, labels, indices=['CH']):
         results['Hartigan'] = -np.log(SSW/SSB)
 
     if 'ZCF' in indices:
-        results['ZCF'] = (SSW/SSB) *len(llabels)
+        results['ZCF'] = (SSW/SSB) * len(llabels)
+
+    if 'Xu' in indices:
+        results['Xu'] = X.shape[1] * np.log(np.sqrt(SSW/(X.shape[1]*len(labels)*len(labels))))+np.log(len(llabels))
 
     if 'SSW' in indices:
         results['SSW'] = SSW
