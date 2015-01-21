@@ -28,8 +28,8 @@ class quantization_error(BaseEstimator):
     """
     Method for determining the number of clusers for numerical data defined in:
 
-    Kolesnikov, A.; Trichina, E. & Kauranne, T. "Estimating the number of clusters in a numerical data set via
-    quantization error modeling" Pattern Recognition , 2015, 48, 941 - 952
+    Kolesnikov, A.; Trichina, E. & Kauranne, T. (2015) "Estimating the number of clusters in a numerical data set via
+    quantization error modeling" Pattern Recognition ,48, 941 - 952
 
     Implemented using a similar interface to the BaseEstimator class
     """

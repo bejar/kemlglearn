@@ -29,8 +29,8 @@ class Xu(BaseEstimator):
     """
     Method for determining the number of clusers for numerical data defined in:
 
-    Kolesnikov, A.; Trichina, E. & Kauranne, T. "Estimating the number of clusters in a numerical data set via
-    quantization error modeling" Pattern Recognition , 2015, 48, 941 - 952
+    XU, L. (1997) Bayesian Ying-Yang Machine, clustering and Number of Clusters.
+    Pattern Recognition Letters 18, 1167-1178
 
     Implemented using a similar interface to the BaseEstimator class
     """

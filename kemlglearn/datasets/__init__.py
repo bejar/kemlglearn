@@ -13,12 +13,12 @@ __init__.py
 
 :Version: 
 
-:Created on: 25/11/2014 9:31 
+:Created on: 21/01/2015 9:00 
 
 """
 
 __author__ = 'bejar'
 
+from .samples_generator import cluster_generator
 
-
-
+__all__ = ['cluster_generator']

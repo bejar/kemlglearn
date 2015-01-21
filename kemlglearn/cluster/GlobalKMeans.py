@@ -88,13 +88,13 @@ class GlobalKMeans(BaseEstimator,ClusterMixin,TransformerMixin):
 
         # Compute the centroid of the dataset
         centroids = sum(X)/X.shape[0]
-
         centroids.shape = (1, X.shape[1])
 
         for i in range(2, self.n_clusters+1):
             mininertia = np.infty
             for j in range(X.shape[0]):
-                newcentroids = np.vstack((centroids,X[j]))
+                newcentroids = np.vstack((centroids, X[j]))
+                #print newcentroids.shape
                 km = KMeans(n_clusters=i, init=newcentroids, n_init=1)
                 km.fit(X)
                 if mininertia > km.inertia_:
@@ -152,7 +152,7 @@ class GlobalKMeans(BaseEstimator,ClusterMixin,TransformerMixin):
         for i in range(X.shape[0]):
             distance = euclidean_distances(X[i], centroids[assignments[i]])[0]
             S2 = self._neighbors.radius_neighbors(X[i], radius=distance, return_distance=False)[0]
-            S2centroid = sum(X[S2])/len(S2)
+            S2centroid = np.sum(X[S2], axis=0)/len(S2)
             S2centroid.shape = (1, X.shape[1])
             cost = self._compute_fk(X, mindist, S2centroid)
 
@@ -178,7 +178,7 @@ class GlobalKMeans(BaseEstimator,ClusterMixin,TransformerMixin):
                 if newDist[i] < mindist[i]:
                     S2.append(i)
 
-            newCentroid = sum(X[S2])/len(S2)
+            newCentroid = np.sum(X[S2], axis=0)/len(S2)
             newCentroid.shape = (1, X.shape[1])
 
         return candCentroid
