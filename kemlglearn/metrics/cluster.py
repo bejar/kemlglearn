@@ -250,13 +250,13 @@ def DaviesBouldin(X, labels):
         centroids[idx] = center
 
     # Centroids distance matrix
-    cdistances = euclidean_distances(centroids, squared=True)
+    cdistances = euclidean_distances(centroids)
 
     # Examples to centroid mean distance
     mdcentroid = np.zeros(nclust)
     for idx in llabels:
         center_mask = labels == idx
-        vdist = euclidean_distances(centroids[idx], X[center_mask], squared=True)
+        vdist = euclidean_distances(centroids[idx], X[center_mask])
         mdcentroid[idx] = vdist.sum()/center_mask.sum()
 
     # Compute the index
