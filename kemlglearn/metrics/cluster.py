@@ -22,11 +22,19 @@ __author__ = 'bejar'
 
 
 import numpy as np
-from sklearn.metrics.pairwise import euclidean_distances, pairwise_distances
+from sklearn.metrics.pairwise import euclidean_distances
 
 def scatter_matrices_scores(X, labels, indices=['CH']):
     """
     Computes differente indices obtained from the Within and Between scatter matrices
+
+    Includes:
+        'SSW': Within scatter matrix score
+        'SSB': Between scatter matrix score
+        'Hartigan': Hartigan index
+        'CH': Caliski-Harabasz index
+        'Xu': Xu index
+        'ZCF': ZhaoChuFranti index
 
     :param X:
     :param labels:
@@ -85,6 +93,7 @@ def scatter_matrices_scores(X, labels, indices=['CH']):
         results['SSB'] = SSB
 
     return results
+
 
 def within_scatter_matrix_score(X, labels):
     """
@@ -216,7 +225,8 @@ def ZhaoChuFranti(X, labels):
 
     SSW = dist / len(labels)
 
-    return (SSW/SSB) *len(llabels)
+    return (SSW/SSB) * len(llabels)
+
 
 def DaviesBouldin(X, labels):
     """
@@ -229,7 +239,6 @@ def DaviesBouldin(X, labels):
 
     llabels = np.unique(labels)
     nclust = len(llabels)
-    nex = len(labels)
 
     # compute the centroids
     centroids = np.zeros((nclust, X.shape[1]))
@@ -250,6 +259,7 @@ def DaviesBouldin(X, labels):
         vdist = euclidean_distances(centroids[idx], X[center_mask], squared=True)
         mdcentroid[idx] = vdist.sum()/center_mask.sum()
 
+    # Compute the index
     dist = 0.0
     for idxi in llabels:
         lvals = []
@@ -259,6 +269,4 @@ def DaviesBouldin(X, labels):
                 lvals.append((disti + mdcentroid[idxj])/cdistances[idxi, idxj])
         dist += max(lvals)
 
-
     return dist/nclust
-
