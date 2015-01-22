@@ -22,7 +22,7 @@ __author__ = 'bejar'
 
 
 import numpy as np
-from  sklearn.metrics.pairwise import euclidean_distances, pairwise_distances
+from sklearn.metrics.pairwise import euclidean_distances, pairwise_distances
 
 def scatter_matrices_scores(X, labels, indices=['CH']):
     """
