@@ -28,7 +28,7 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from kemlglearn.datasets import cluster_generator
 from kemlglearn.metrics import within_scatter_matrix_score, between_scatter_matrix_score, CalinskiHarabasz,\
-    ZhaoChuFranti, scatter_matrices_scores
+    ZhaoChuFranti, scatter_matrices_scores, DaviesBouldin
 
 #X, y_data = make_blobs(n_samples=1000, n_features=10, centers=20, random_state=2)
 #X = load_iris()['data']
@@ -74,6 +74,7 @@ for nc in range(2, 16):
     km.fit(X)
     #print km.cluster_centers_.shape[0], km.inertia_
     print nc, scatter_matrices_scores(X, km.labels_, ['CH', 'ZCF', 'Hartigan', 'Xu'])
+    print DaviesBouldin(X, km.labels_)
 
 # fig = plt.figure()
 #

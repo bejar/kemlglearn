@@ -33,6 +33,8 @@ def scatter_matrices_scores(X, labels, indices=['CH']):
     :return:
     """
     llabels = np.unique(labels)
+    nclust = len(llabels)
+    nex = len(labels)
 
     # Centroid of the data
 
@@ -41,7 +43,7 @@ def scatter_matrices_scores(X, labels, indices=['CH']):
     centroid /= X.shape[0]
 
     # Compute SSB
-    ccentroid = np.zeros((len(llabels), X.shape[1]))
+    ccentroid = np.zeros((nclust, X.shape[1]))
     dist = 0.0
     for idx in llabels:
         center = np.zeros((1, X.shape[1]))
@@ -65,16 +67,16 @@ def scatter_matrices_scores(X, labels, indices=['CH']):
     results = {}
 
     if 'CH' in indices:
-        results['CH'] = (SSB/(len(llabels)-1))/(SSW/(len(labels)-len(llabels)))
+        results['CH'] = (SSB/(nclust-1))/(SSW/(nex-nclust))
 
     if 'Hartigan' in indices:
         results['Hartigan'] = -np.log(SSW/SSB)
 
     if 'ZCF' in indices:
-        results['ZCF'] = (SSW/SSB) * len(llabels)
+        results['ZCF'] = (SSW/SSB) * nclust
 
     if 'Xu' in indices:
-        results['Xu'] = X.shape[1] * np.log(np.sqrt(SSW/(X.shape[1]*len(labels)*len(labels))))+np.log(len(llabels))
+        results['Xu'] = X.shape[1] * np.log(np.sqrt(SSW/(X.shape[1]*nex*nex)))+np.log(nclust)
 
     if 'SSW' in indices:
         results['SSW'] = SSW
@@ -215,3 +217,48 @@ def ZhaoChuFranti(X, labels):
     SSW = dist / len(labels)
 
     return (SSW/SSB) *len(llabels)
+
+def DaviesBouldin(X, labels):
+    """
+    Implements the Davies&Bouldin score for a labeling of the data
+
+    :param X:
+    :param labels:
+    :return:
+    """
+
+    llabels = np.unique(labels)
+    nclust = len(llabels)
+    nex = len(labels)
+
+    # compute the centroids
+    centroids = np.zeros((nclust, X.shape[1]))
+    for idx in llabels:
+        center = np.zeros((1, X.shape[1]))
+        center_mask = labels == idx
+        center += np.sum(X[center_mask], axis=0)
+        center /= center_mask.sum()
+        centroids[idx] = center
+
+    # Centroids distance matrix
+    cdistances = euclidean_distances(centroids, squared=True)
+
+    # Examples to centroid mean distance
+    mdcentroid = np.zeros(nclust)
+    for idx in llabels:
+        center_mask = labels == idx
+        vdist = euclidean_distances(centroids[idx], X[center_mask], squared=True)
+        mdcentroid[idx] = vdist.sum()/center_mask.sum()
+
+    dist = 0.0
+    for idxi in llabels:
+        lvals = []
+        disti = mdcentroid[idxi]
+        for idxj in llabels:
+            if idxj != idxi:
+                lvals.append((disti + mdcentroid[idxj])/cdistances[idxi, idxj])
+        dist += max(lvals)
+
+
+    return dist/nclust
+

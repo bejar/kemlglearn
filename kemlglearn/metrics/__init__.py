@@ -20,10 +20,11 @@ __init__.py
 __author__ = 'bejar'
 
 from .cluster import within_scatter_matrix_score, between_scatter_matrix_score, CalinskiHarabasz, ZhaoChuFranti,\
-    scatter_matrices_scores
+    scatter_matrices_scores, DaviesBouldin
 
 __all__ = ['within_scatter_matrix_score',
            'between_scatter_matrix_score',
            'CalinskiHarabasz',
            'ZhaoChuFranti',
-           'scatter_matrices_scores']
+           'scatter_matrices_scores',
+           'DaviesBouldin']
