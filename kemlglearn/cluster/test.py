@@ -29,6 +29,7 @@ from sklearn.cluster import KMeans
 from kemlglearn.datasets import cluster_generator
 from kemlglearn.metrics import within_scatter_matrix_score, between_scatter_matrix_score, CalinskiHarabasz,\
     ZhaoChuFranti, scatter_matrices_scores, DaviesBouldin
+from kemlglearn.cluster.consensus import SimpleConsensusClustering
 
 #X, y_data = make_blobs(n_samples=1000, n_features=10, centers=20, random_state=2)
 #X = load_iris()['data']
@@ -52,8 +53,10 @@ _, X = cluster_generator(n_clusters=8, sepval=0.01, numNonNoisy=15, numNoisy=3, 
 #
 # plt.show()
 
-# gkm = GlobalKMeans(n_clusters=5)
-# gkm.fit(X)
+gkm = GlobalKMeans(n_clusters=8)
+gkm.fit(X)
+print DaviesBouldin(X, gkm.labels_)
+
 #
 # print gkm.cluster_centers_.shape[0], gkm.inertia_
 # print within_scatter_matrix_score(X, gkm.labels_)
@@ -69,16 +72,32 @@ _, X = cluster_generator(n_clusters=8, sepval=0.01, numNonNoisy=15, numNoisy=3, 
 # plt.scatter(X[:, 0], X[:, 1], c=gkm.labels_)
 #
 # plt.show()
-for nc in range(2, 16):
-    km = KMeans(n_clusters=nc)
-    km.fit(X)
-    #print km.cluster_centers_.shape[0], km.inertia_
-    print nc, scatter_matrices_scores(X, km.labels_, ['CH', 'ZCF', 'Hartigan', 'Xu'])
-    print DaviesBouldin(X, km.labels_)
+# for nc in range(2, 16):
+#     km = KMeans(n_clusters=nc)
+#     km.fit(X)
+#     #print km.cluster_centers_.shape[0], km.inertia_
+#     print nc, scatter_matrices_scores(X, km.labels_, ['CH', 'ZCF', 'Hartigan', 'Xu'])
+#     print DaviesBouldin(X, km.labels_)
 
 # fig = plt.figure()
 #
 # ax = fig.add_subplot(111)
 # plt.scatter(X[:,0],X[:,1],c=km.labels_)
+#
+# plt.show()
+
+km = KMeans(n_clusters=8)
+km.fit(X)
+
+print DaviesBouldin(X, km.labels_)
+
+simple = SimpleConsensusClustering(n_clusters=8, n_components=20)
+simple.fit(X)
+
+print DaviesBouldin(X,simple.labels_)
+# fig = plt.figure()
+#
+# ax = fig.add_subplot(111)
+# plt.scatter(X[:, 0], X[:, 1], c=simple.labels_)
 #
 # plt.show()

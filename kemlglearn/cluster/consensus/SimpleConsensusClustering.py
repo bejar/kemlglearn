@@ -29,10 +29,16 @@ from sklearn.cluster import KMeans
 class SimpleConsensusClustering(BaseEstimator,ClusterMixin,TransformerMixin):
     """Simple Consensus Clustering Algorithm
 
-    Paramerets:
+    Pararemeters:
 
-    radius: float
-        Clustering radius for asigning examples to a cluster
+    n_clusters: int
+        Number of clusters of the base clusterers and the consensus cluster
+    base: string
+        base clusterer ['kmeans']
+    n_components: int
+        number of components of the consensus
+    consensus: string
+        consensus method ['coincidence']
 
     """
     def __init__(self, n_clusters, base='kmeans', n_components=10, consensus='coincidence'):
@@ -80,5 +86,9 @@ class SimpleConsensusClustering(BaseEstimator,ClusterMixin,TransformerMixin):
                             coin_matrix[i, j] += 1
                             coin_matrix[j, i] += 1
 
-
         coin_matrix /= self.n_components
+
+        if self.consensus == 'kmeans':
+            km.fit(coin_matrix)
+
+        return km.cluster_centers_, km.labels_
