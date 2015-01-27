@@ -27,7 +27,7 @@ from sklearn.cluster import KMeans
 from sklearn.neighbors import NearestNeighbors
 
 
-class GlobalKMeans(BaseEstimator,ClusterMixin,TransformerMixin):
+class GlobalKMeans(BaseEstimator, ClusterMixin, TransformerMixin):
     """Global K-means Algorithm
 
     Paramereters:

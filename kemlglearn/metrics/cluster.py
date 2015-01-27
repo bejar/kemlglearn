@@ -92,6 +92,9 @@ def scatter_matrices_scores(X, labels, indices=['CH']):
     if 'SSB' in indices:
         results['SSB'] = SSB
 
+    if 'Inertia' in indices:
+        results['Inertia'] = SSW * len(labels)
+
     return results
 
 

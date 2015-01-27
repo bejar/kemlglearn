@@ -35,7 +35,9 @@ from kemlglearn.cluster.consensus import SimpleConsensusClustering
 #X = load_iris()['data']
 #X, y_data = make_circles(n_samples=1000, noise=0.5, random_state=4, factor=0.5)
 
-_, X = cluster_generator(n_clusters=8, sepval=0.01, numNonNoisy=15, numNoisy=3, rangeN=[200, 250])
+
+nc = 12
+_, X = cluster_generator(n_clusters=nc, sepval=0.01, numNonNoisy=15, numNoisy=3, rangeN=[50, 100])
 # ld = Leader(radius=25.0)
 #
 # #print timeit.timeit(stmt='ld.fit(X)',setup=setup,number=10)
@@ -53,16 +55,17 @@ _, X = cluster_generator(n_clusters=8, sepval=0.01, numNonNoisy=15, numNoisy=3, 
 #
 # plt.show()
 
-gkm = GlobalKMeans(n_clusters=8)
+gkm = GlobalKMeans(n_clusters=nc)
 gkm.fit(X)
 print DaviesBouldin(X, gkm.labels_)
+print scatter_matrices_scores(X, gkm.labels_, ['Inertia'])
 
 #
 # print gkm.cluster_centers_.shape[0], gkm.inertia_
 # print within_scatter_matrix_score(X, gkm.labels_)
 # print between_scatter_matrix_score(X, gkm.labels_)
 
-#
+
 # fig = plt.figure()
 #
 # # ax = fig.gca(projection='3d')
@@ -86,15 +89,41 @@ print DaviesBouldin(X, gkm.labels_)
 #
 # plt.show()
 
-km = KMeans(n_clusters=8)
+km = KMeans(n_clusters=nc)
 km.fit(X)
 
 print DaviesBouldin(X, km.labels_)
+print scatter_matrices_scores(X, km.labels_, ['Inertia'])
 
-simple = SimpleConsensusClustering(n_clusters=8, n_components=20)
+# fig = plt.figure()
+#
+# ax = fig.add_subplot(111)
+# plt.scatter(X[:,0],X[:,1],c=km.labels_)
+#
+# plt.show()
+
+
+simple = SimpleConsensusClustering(n_clusters=nc, n_components=40)
 simple.fit(X)
 
-print DaviesBouldin(X,simple.labels_)
+print DaviesBouldin(X, simple.labels_)
+print scatter_matrices_scores(X, simple.labels_, ['Inertia'])
+
+# fig = plt.figure()
+#
+# ax = fig.add_subplot(111)
+# plt.scatter(X[:,0],X[:,1],c=simple.labels_)
+#
+# plt.show()
+
+
+simple = SimpleConsensusClustering(n_clusters=nc, n_components=40, consensus2='spectral')
+simple.fit(X)
+
+print DaviesBouldin(X, simple.labels_)
+print scatter_matrices_scores(X, simple.labels_, ['Inertia'])
+#
+
 # fig = plt.figure()
 #
 # ax = fig.add_subplot(111)
