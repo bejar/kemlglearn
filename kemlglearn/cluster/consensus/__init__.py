@@ -20,5 +20,7 @@ __init__.py
 __author__ = 'bejar'
 
 from .SimpleConsensusClustering import SimpleConsensusClustering
+from .MeanPartition import MeanPartitionClustering
 
-__all__ = ['SimpleConsensusClustering']
+__all__ = ['SimpleConsensusClustering',
+           'MeanPartitionClustering']

@@ -26,7 +26,7 @@ from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.cluster import KMeans, SpectralClustering
 
 
-class SimpleConsensusClustering(BaseEstimator,ClusterMixin,TransformerMixin):
+class SimpleConsensusClustering(BaseEstimator, ClusterMixin, TransformerMixin):
     """Simple Consensus Clustering Algorithm
 
     Pararemeters:
@@ -53,7 +53,7 @@ class SimpleConsensusClustering(BaseEstimator,ClusterMixin,TransformerMixin):
         self.consensus2 = consensus2
 
 
-    def fit(self,X):
+    def fit(self, X):
         """
         Clusters the examples
         :param X:
@@ -74,7 +74,7 @@ class SimpleConsensusClustering(BaseEstimator,ClusterMixin,TransformerMixin):
         """
         baseclust = []
         if self.base == 'kmeans':
-            km = KMeans(n_clusters=self.n_clusters,n_jobs=-1)
+            km = KMeans(n_clusters=self.n_clusters, n_jobs=-1)
         elif self.base == 'spectral':
             km = SpectralClustering(n_clusters=self.n_clusters, assign_labels='discretize',
                                     affinity='nearest_neighbors', n_neighbors=30)

@@ -23,6 +23,7 @@ __author__ = 'bejar'
 
 import numpy as np
 from sklearn.metrics.pairwise import euclidean_distances
+from sklearn.metrics.cluster.supervised import contingency_matrix, check_clusterings, mutual_info_score, entropy
 
 def scatter_matrices_scores(X, labels, indices=['CH']):
     """
@@ -146,7 +147,7 @@ def between_scatter_matrix_score(X, labels):
     return dist / len(labels)
 
 
-def CalinskiHarabasz(X, labels):
+def calinski_harabasz_score(X, labels):
     """
     Computes the Calinski&Harabasz score for a labeling of the data
 
@@ -187,7 +188,7 @@ def CalinskiHarabasz(X, labels):
     return (SSB/(len(llabels)-1))/(SSW/(len(labels)-len(llabels)))
 
 
-def ZhaoChuFranti(X, labels):
+def zhao_chu_franti_score(X, labels):
     """
     Implements the method defined in:
 
@@ -231,7 +232,7 @@ def ZhaoChuFranti(X, labels):
     return (SSW/SSB) * len(llabels)
 
 
-def DaviesBouldin(X, labels):
+def davies_bouldin_score(X, labels):
     """
     Implements the Davies&Bouldin score for a labeling of the data
 
@@ -273,3 +274,67 @@ def DaviesBouldin(X, labels):
         dist += max(lvals)
 
     return dist/nclust
+
+
+def variation_of_information_score(labels_true, labels_pred):
+    """Variation of Information (Meila, 2003)
+    """
+    labels_true, labels_pred = check_clusterings(labels_true, labels_pred)
+
+    mutual = mutual_info_score(labels_true, labels_pred)
+    e1 = entropy(labels_true)
+    e2 = entropy(labels_pred)
+
+    return e1 + e2 - (2* mutual)
+
+
+def jaccard_score(labels_true, labels_pred):
+    """
+    Jaccard coeficient computed according to:
+
+    Ceccarelli, M. & Maratea, A. A "Fuzzy Extension of Some Classical Concordance Measures and an Efficient Algorithm
+    for Their Computation" Knowledge-Based Intelligent Information and Engineering Systems,
+    Springer Berlin Heidelberg, 2008, 5179, 755-763
+
+    :param labels_true:
+    :param labels_pred:
+    :return:
+    """
+    labels_true, labels_pred = check_clusterings(labels_true, labels_pred)
+    n_samples = labels_true.shape[0]
+    contingency = contingency_matrix(labels_true, labels_pred)
+
+    cc = np.sum(contingency * contingency)
+    N11 = (cc - n_samples)
+    c1 = contingency.sum(axis=1)
+    N01 = np.sum(c1 * c1) - cc
+    c2 = contingency.sum(axis=0)
+    N10 = np.sum(c2 * c2) - cc
+
+    return (N11*1.0)/(N11+N01+N10)
+
+
+def folkes_mallow_score(labels_true, labels_pred):
+    """
+    Folkes&Mallow score  computed according to:
+
+    Ceccarelli, M. & Maratea, A. A "Fuzzy Extension of Some Classical Concordance Measures and an Efficient Algorithm
+    for Their Computation" Knowledge-Based Intelligent Information and Engineering Systems,
+    Springer Berlin Heidelberg, 2008, 5179, 755-763
+
+    :param labels_true:
+    :param labels_pred:
+    :return:
+    """
+    labels_true, labels_pred = check_clusterings(labels_true, labels_pred)
+    n_samples = labels_true.shape[0]
+    contingency = contingency_matrix(labels_true, labels_pred)
+
+    cc = np.sum(contingency * contingency)
+    N11 = (cc - n_samples)
+    c1 = contingency.sum(axis=1)
+    N01 = np.sum(c1 * c1) - cc
+    c2 = contingency.sum(axis=0)
+    N10 = np.sum(c2 * c2) - cc
+
+    return (N11*1.0)/np.sqrt((N11+N01)*(N11+N10))
