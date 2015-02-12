@@ -21,6 +21,5 @@ __author__ = 'bejar'
 from .GlobalKMeans import GlobalKMeans
 from .Leader import Leader
 
-
 __all__ = ['GlobalKMeans',
            'Leader']
