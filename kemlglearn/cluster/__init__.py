@@ -8,7 +8,6 @@ __init__.py
 
 
 :Authors: bejar
-    
 
 :Version: 
 
