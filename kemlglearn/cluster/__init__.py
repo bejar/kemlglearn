@@ -6,7 +6,6 @@ __init__.py
 
 :Description: __init__.py
 
-    
 
 :Authors: bejar
     
