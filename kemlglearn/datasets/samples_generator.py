@@ -53,10 +53,10 @@ def cluster_generator(n_clusters=3, sepval=0.5, numNonNoisy=5, numNoisy=0, numOu
          }
 
     x= clusterG.genRandomClust(**params)
-    nm =np.array(x[2][0].colnames)
-    nm = np.concatenate((nm, ['class']))
+    # nm = np.array(x[2][0].colnames)
+    # nm = np.concatenate((nm, ['class']))
     m = np.matrix(x[2][0])
     v = np.array(x[3][0])
-    v.resize((len(x[3][0]),1))
-    m = np.concatenate((m, v),axis=1)
-    return nm,m
+    v.resize((len(x[3][0])))
+    #m = np.concatenate((m, v), axis=1)
+    return  m, v

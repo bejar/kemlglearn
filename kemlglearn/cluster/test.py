@@ -27,9 +27,9 @@ import pylab as pl
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from kemlglearn.datasets import cluster_generator
-from kemlglearn.metrics import within_scatter_matrix_score, between_scatter_matrix_score, CalinskiHarabasz,\
-    ZhaoChuFranti, scatter_matrices_scores, DaviesBouldin, variation_of_information_score, jaccard_score, JaccardArandFolkes,\
-    folkes_mallow_score
+from kemlglearn.metrics import within_scatter_matrix_score, between_scatter_matrix_score, calinski_harabasz_score,\
+    zhao_chu_franti_score, scatter_matrices_scores, davies_bouldin_score, variation_of_information_score, \
+    jaccard_score, JaccardArandFolkes, folkes_mallow_score
 from kemlglearn.cluster.consensus import SimpleConsensusClustering
 from sklearn.metrics.cluster import normalized_mutual_info_score
 
