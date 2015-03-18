@@ -45,7 +45,6 @@ class Discretizer(BaseEstimator, TransformerMixin):
         :param X:
         :return:
         """
-
         if self.method == 'equal':
             self._fit_equal(X)
         elif self.method == 'frequency':
@@ -83,7 +82,6 @@ class Discretizer(BaseEstimator, TransformerMixin):
         self.intervals = np.zeros((self.bins, X.shape[1]))
 
         quant = X.shape[0] / float(self.bins)
-        print quant
         for i in range(X.shape[1]):
             lvals = sorted(X[:, i])
             nb = 0
@@ -98,17 +96,16 @@ class Discretizer(BaseEstimator, TransformerMixin):
         :param X:
         :return:
         """
+        if self.intervals is None:
+            raise Exception('Discretizer: Not fitted')
         if copy:
             Y = X.copy()
-
-        if self.method == 'equal':
-            self._transform_equal(Y)
-
-        if copy:
-            return Y
         else:
-            X = Y
-            return X
+            Y = X
+
+        self._transform(Y)
+
+        return Y
 
     def __discretizer(self, v, at):
         """
@@ -121,7 +118,7 @@ class Discretizer(BaseEstimator, TransformerMixin):
             i += 1
         return i
 
-    def _transform_equal(self, X,):
+    def _transform(self, X,):
         """
 
         :param X:
@@ -130,3 +127,15 @@ class Discretizer(BaseEstimator, TransformerMixin):
         for i in range(X.shape[1]):
             for j in range(X.shape[0]):
                 X[j, i] = self.__discretizer(X[j, i], i)
+
+    def fit_transform(self, X, copy=False):
+        """
+        Fits and transforms the data
+
+        :param X:
+        :param copy:
+        :return:
+        """
+        self.fit(X)
+        return self.transform(X, copy)
+
