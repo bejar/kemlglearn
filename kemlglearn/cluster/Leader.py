@@ -24,7 +24,7 @@ from sklearn.base import BaseEstimator, ClusterMixin, TransformerMixin
 from sklearn.metrics.pairwise import euclidean_distances
 
 
-class Leader(BaseEstimator,ClusterMixin,TransformerMixin):
+class Leader(BaseEstimator, ClusterMixin, TransformerMixin):
     """Leader Algorithm Clustering
 
     Paramerets:
