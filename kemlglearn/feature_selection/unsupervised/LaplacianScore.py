@@ -71,7 +71,7 @@ class LaplacianScore():
             raise Exception('Laplacian Score: Not fitted')
         else:
             l = list(enumerate(self.scores_))
-            l= sorted(l,key=itemgetter(1), reverse=True)
+            l = sorted(l, key=itemgetter(1), reverse=True)
             return [l[i][0] for i in range(k)]
 
     def fit_transform(self, X):
@@ -86,11 +86,11 @@ class LaplacianScore():
         lsel = [l[i][0] for i in range(self._k)]
         return X[:, lsel]
 
+    # Todo: implementation only with sparse matrices
     def _fit_process(self, X):
         """
         Computes the Laplacian score for the attributes
 
-        ToDo: implementation only with sparse matrices
 
         @param X:
         @return:
@@ -99,7 +99,7 @@ class LaplacianScore():
         self.scores_ = np.zeros(X.shape[1])
 
         # Similarity matrix
-        S = kneighbors_graph(X, n_neighbors=self._n_neighbors,mode='distance')
+        S = kneighbors_graph(X, n_neighbors=self._n_neighbors, mode='distance')
         S = S.toarray()
         S *= S
         S /= self._bandwidth
@@ -107,14 +107,14 @@ class LaplacianScore():
 
         ones = np.ones(X.shape[0])
 
-        D = np.diag(np.dot(S,ones))
+        D = np.diag(np.dot(S, ones))
 
         L = D - S
 
         qt = D.sum()
         for at in range(X.shape[1]):
             Fr = X[:, at]
-            Fr_hat = Fr - np.dot(np.dot(Fr,D)/qt, ones)
+            Fr_hat = Fr - np.dot(np.dot(Fr, D) / qt, ones)
 
             score1 = np.dot(np.dot(Fr_hat, L), Fr_hat)
             score2 = np.dot(np.dot(Fr_hat, D), Fr_hat)

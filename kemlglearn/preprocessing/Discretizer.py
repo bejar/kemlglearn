@@ -20,10 +20,10 @@ Discretizer
 __author__ = 'bejar'
 
 import numpy as np
-from sklearn.base import BaseEstimator, ClusterMixin, TransformerMixin
+from sklearn.base import TransformerMixin
 
-
-class Discretizer(BaseEstimator, TransformerMixin):
+#Todo: Add the possibility of using the (weighted) mean value of the interval
+class Discretizer(TransformerMixin):
     """
     Discretization of the attributes of a dataset (unsupervised)
 
@@ -37,8 +37,7 @@ class Discretizer(BaseEstimator, TransformerMixin):
         self.method = method
         self.bins = bins
 
-
-    def fit(self,X):
+    def _fit(self,X):
         """
         Computes the discretization intervals
 
@@ -49,7 +48,6 @@ class Discretizer(BaseEstimator, TransformerMixin):
             self._fit_equal(X)
         elif self.method == 'frequency':
             self._fit_frequency(X)
-
 
     def _fit_equal(self, X):
         """
@@ -90,7 +88,7 @@ class Discretizer(BaseEstimator, TransformerMixin):
                 nb += 1
             self.intervals[self.bins-1, i] += 0.00000000001
 
-    def transform(self, X, copy=False):
+    def _transform(self, X, copy=False):
         """
         Discretizes the attributes of a dataset
         :param X:
@@ -136,6 +134,6 @@ class Discretizer(BaseEstimator, TransformerMixin):
         :param copy:
         :return:
         """
-        self.fit(X)
-        return self.transform(X, copy)
+        self._fit(X)
+        return self._transform(X, copy)
 
