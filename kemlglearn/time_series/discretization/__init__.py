@@ -18,3 +18,8 @@ __init__.py
 """
 
 __author__ = 'bejar'
+
+
+from .SAX import SAX
+
+__all__ = ['SAX']

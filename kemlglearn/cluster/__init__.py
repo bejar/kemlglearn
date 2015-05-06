@@ -18,6 +18,10 @@ __author__ = 'bejar'
 
 from .GlobalKMeans import GlobalKMeans
 from .Leader import Leader
+from .KernelKMeans import KernelKMeans
+from .KModes import KModes
+from .KPrototypes import KPrototypes
 
 __all__ = ['GlobalKMeans',
-           'Leader']
+           'Leader', 'KernelKMeans',
+           'KModes', 'KPrototypes']
