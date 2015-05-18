@@ -276,6 +276,73 @@ def davies_bouldin_score(X, labels):
     return dist/nclust
 
 
+def jeffrey_divergence_score(X, labels):
+    """
+    Implements the score based on the Jeffrey divergence that appears in:
+
+    Said, A.; Hadjidj, R. & Foufou, S. "Cluster validity index based on Jeffrey divergence"
+    Pattern Analysis and Applications, Springer London, 2015, 1-11
+
+    :param X:
+    :param labels:
+    :return:
+    """
+
+    llabels = np.unique(labels)
+    nclust = len(llabels)
+
+    # compute the centroids
+    centroids = np.zeros((nclust, X.shape[1]))
+    for idx in llabels:
+        center = np.zeros((1, X.shape[1]))
+        center_mask = labels == idx
+        center += np.sum(X[center_mask], axis=0)
+        center /= center_mask.sum()
+        centroids[idx] = center
+
+    lcovs = []
+    linvcovs = []
+    for idx in llabels:
+        cov_mask = labels == idx
+        covar = np.cov(X[cov_mask].T)
+        lcovs.append(covar)
+        linvcovs.append(np.linalg.inv(covar))
+
+    traces = np.zeros((nclust, nclust))
+    for idx1 in llabels:
+        for idx2 in llabels:
+            traces[idx1, idx2] = np.trace(np.dot(linvcovs[idx1], lcovs[idx2]))
+            traces[idx1, idx2] += np.trace(np.dot(linvcovs[idx2], lcovs[idx1]))
+            traces[idx1, idx2] /= 2.0
+
+    sumcov = np.zeros((nclust, nclust))
+    for idx1 in llabels:
+        for idx2 in llabels:
+            v1 = centroids[idx1]
+            v2 = centroids[idx2]
+            vm = v1-v2
+            mcv = linvcovs[idx1] + linvcovs[idx2]
+            sumcov[idx1, idx2] = np.dot(vm.T, np.dot(mcv, vm))
+            sumcov[idx1, idx2] /= 2.0
+
+    ssep = 0.0
+    for idx1 in llabels:
+        minv = np.inf
+        for idx2 in llabels:
+            if idx1 != idx2:
+                val = traces[idx1, idx2] + sumcov[idx1, idx2] - centroids.shape[1]
+                if minv > val:
+                    minv = val
+        ssep += minv
+
+    scompact = 0.0
+    for idx in llabels:
+        center_mask = labels == idx
+        dvector = euclidean_distances(X[center_mask], centroids[idx], squared=True)
+        scompact += dvector.max()
+
+    return  scompact/ssep
+
 def variation_of_information_score(labels_true, labels_pred):
     """Variation of Information (Meila, 2003)
     """
