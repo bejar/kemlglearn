@@ -127,6 +127,6 @@ if __name__ == '__main__':
     from sklearn.datasets import make_blobs
     X, y = make_blobs(n_samples=1000, centers=5, random_state=0)
 
-    km = KernelKMeans(n_clusters=5, max_iter=100, random_state=0, verbose=1)
-    print km.fit_predict(X)[:10]
+    km = KernelKMeans(n_clusters=3, max_iter=100, random_state=0, verbose=1)
+    print km.fit_predict(X[:10])
     print km.predict(X[:10])

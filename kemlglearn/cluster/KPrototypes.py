@@ -6,7 +6,7 @@
 
 from collections import defaultdict
 import numpy as np
-from . import KModes
+from .KModes import KModes
 
 
 def euclidean_dissim(a, b):
@@ -224,7 +224,7 @@ def k_prototypes(X, n_clusters, gamma, init, n_init, max_iter, verbose):
     return all_centroids[best], all_labels[best], all_costs[best], gamma
 
 
-class KPrototypes(KModes.KModes):
+class KPrototypes(KModes):
     """k-protoypes clustering algorithm for mixed numerical/categorical data.
 
     Parameters
