@@ -19,6 +19,6 @@ __init__.py
 
 __author__ = 'bejar'
 
-from .samples_generator import cluster_generator
+from .samples_generator import cluster_generator, make_blobs
 
-__all__ = ['cluster_generator']
+__all__ = ['cluster_generator', 'make_blobs']
