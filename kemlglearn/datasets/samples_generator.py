@@ -22,7 +22,7 @@ __author__ = 'bejar'
 from rpy2.robjects.packages import importr
 import numpy as np
 import numbers
-from sklearn.utils import check_random_state, array2d
+from sklearn.utils import check_random_state, check_array
 
 
 def make_blobs(n_samples=100, n_features=2, centers=3, cluster_std=1.0,
@@ -86,7 +86,7 @@ def make_blobs(n_samples=100, n_features=2, centers=3, cluster_std=1.0,
         centers = generator.uniform(center_box[0], center_box[1],
                                     size=(centers, n_features))
     else:
-        centers = array2d(centers)
+        centers = check_array(centers)
         n_features = centers.shape[1]
 
     X = []
@@ -157,11 +157,11 @@ def cluster_generator(n_clusters=3, sepval=0.5, numNonNoisy=5, numNoisy=0, numOu
           'outputInfo': False
          }
 
-    x= clusterG.genRandomClust(**params)
+    x = clusterG.genRandomClust(**params)
     # nm = np.array(x[2][0].colnames)
     # nm = np.concatenate((nm, ['class']))
     m = np.matrix(x[2][0])
     v = np.array(x[3][0])
     v.resize((len(x[3][0])))
     #m = np.concatenate((m, v), axis=1)
-    return  m, v
+    return m, v
