@@ -107,7 +107,7 @@ class Discretizer(TransformerMixin):
 
     def __discretizer(self, v, at):
         """
-
+        Determines the dicretized value for an atribute
         :param v:
         :return:
         """
@@ -116,8 +116,9 @@ class Discretizer(TransformerMixin):
             i += 1
         return i
 
-    def _transform(self, X,):
+    def _transform(self, X):
         """
+        Applies the discretization to all the attributes of the data matrix
 
         :param X:
         :return:
@@ -125,6 +126,26 @@ class Discretizer(TransformerMixin):
         for i in range(X.shape[1]):
             for j in range(X.shape[0]):
                 X[j, i] = self.__discretizer(X[j, i], i)
+
+    def fit(self, X):
+        """
+        Fits a set of discretization intervals using the data in X
+        :param X:
+        :return:
+        """
+        self._fit(X)
+
+    def transform(self, X, copy=False):
+        """
+        Applies previously fitted discretization intervals to X
+
+        :param X:
+        :param copy:
+        :return:
+        """
+
+        return self.fit_transform(X, copy)
+
 
     def fit_transform(self, X, copy=False):
         """
