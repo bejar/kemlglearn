@@ -25,6 +25,18 @@ import numpy as np
 from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.metrics.cluster.supervised import contingency_matrix, check_clusterings, mutual_info_score, entropy
 
+def maplabels(labels):
+    """
+    Returns a dictionary mapping a set of labels to an index
+
+    :param labels:
+    :return:
+    """
+    poslabels = {}
+    for lab, p in zip(labels,range(len(labels))):
+        poslabels[lab] = p
+    return poslabels
+
 def scatter_matrices_scores(X, labels, indices=['CH']):
     """
     Computes differente indices obtained from the Within and Between scatter matrices
@@ -42,6 +54,8 @@ def scatter_matrices_scores(X, labels, indices=['CH']):
     :return:
     """
     llabels = np.unique(labels)
+    poslabels = maplabels(llabels)
+
     nclust = len(llabels)
     nex = len(labels)
 
@@ -59,7 +73,7 @@ def scatter_matrices_scores(X, labels, indices=['CH']):
         center_mask = labels == idx
         center += np.sum(X[center_mask], axis=0)
         center /= center_mask.sum()
-        ccentroid[idx] = center
+        ccentroid[poslabels[idx]] = center
         dvector = euclidean_distances(centroid, ccentroid[idx], squared=True)
         dist += dvector.sum() * center_mask.sum()
     SSB = dist / len(labels)
@@ -156,6 +170,7 @@ def calinski_harabasz_score(X, labels):
     :return:
     """
     llabels = np.unique(labels)
+    poslabels = maplabels(llabels)
 
     # Centroid of the data
 
@@ -171,8 +186,8 @@ def calinski_harabasz_score(X, labels):
         center_mask = labels == idx
         center += np.sum(X[center_mask], axis=0)
         center /= center_mask.sum()
-        ccentroid[idx] = center
-        dvector = euclidean_distances(centroid, ccentroid[idx], squared=True)
+        ccentroid[poslabels[idx]] = center
+        dvector = euclidean_distances(centroid, ccentroid[poslabels[idx]], squared=True)
         dist += dvector.sum() * center_mask.sum()
     SSB = dist / len(labels)
 
@@ -200,6 +215,7 @@ def zhao_chu_franti_score(X, labels):
     :return:
     """
     llabels = np.unique(labels)
+    poslabels = maplabels(llabels)
 
     # Centroid of the data
 
@@ -216,7 +232,7 @@ def zhao_chu_franti_score(X, labels):
         center += np.sum(X[center_mask], axis=0)
         center /= center_mask.sum()
         ccentroid[idx] = center
-        dvector = euclidean_distances(centroid, ccentroid[idx], squared=True)
+        dvector = euclidean_distances(centroid, ccentroid[poslabels[idx]], squared=True)
         dist += dvector.sum() * center_mask.sum()
     SSB = dist / len(labels)
 
@@ -242,6 +258,7 @@ def davies_bouldin_score(X, labels):
     """
 
     llabels = np.unique(labels)
+    poslabels = maplabels(llabels)
     nclust = len(llabels)
 
     # compute the centroids
@@ -267,10 +284,10 @@ def davies_bouldin_score(X, labels):
     dist = 0.0
     for idxi in llabels:
         lvals = []
-        disti = mdcentroid[idxi]
+        disti = mdcentroid[poslabels[idxi]]
         for idxj in llabels:
             if idxj != idxi:
-                lvals.append((disti + mdcentroid[idxj])/cdistances[idxi, idxj])
+                lvals.append((disti + mdcentroid[poslabels[idxj]])/cdistances[poslabels[idxi], poslabels[idxj]])
         dist += max(lvals)
 
     return dist/nclust
@@ -289,6 +306,7 @@ def jeffrey_divergence_score(X, labels):
     """
 
     llabels = np.unique(labels)
+    poslabels = maplabels(llabels)
     nclust = len(llabels)
 
     # compute the centroids
@@ -311,26 +329,26 @@ def jeffrey_divergence_score(X, labels):
     traces = np.zeros((nclust, nclust))
     for idx1 in llabels:
         for idx2 in llabels:
-            traces[idx1, idx2] = np.trace(np.dot(linvcovs[idx1], lcovs[idx2]))
-            traces[idx1, idx2] += np.trace(np.dot(linvcovs[idx2], lcovs[idx1]))
-            traces[idx1, idx2] /= 2.0
+            traces[poslabels[idx1], poslabels[idx2]] = np.trace(np.dot(linvcovs[poslabels[idx1]], lcovs[poslabels[idx2]]))
+            traces[poslabels[idx1], poslabels[idx2]] += np.trace(np.dot(linvcovs[poslabels[idx2]], lcovs[poslabels[idx1]]))
+            traces[poslabels[idx1], poslabels[idx2]] /= 2.0
 
     sumcov = np.zeros((nclust, nclust))
     for idx1 in llabels:
         for idx2 in llabels:
-            v1 = centroids[idx1]
-            v2 = centroids[idx2]
+            v1 = centroids[poslabels[idx1]]
+            v2 = centroids[poslabels[idx2]]
             vm = v1-v2
-            mcv = linvcovs[idx1] + linvcovs[idx2]
-            sumcov[idx1, idx2] = np.dot(vm.T, np.dot(mcv, vm))
-            sumcov[idx1, idx2] /= 2.0
+            mcv = linvcovs[poslabels[idx1]] + linvcovs[poslabels[idx2]]
+            sumcov[poslabels[idx1], poslabels[idx2]] = np.dot(vm.T, np.dot(mcv, vm))
+            sumcov[poslabels[idx1], poslabels[idx2]] /= 2.0
 
     ssep = 0.0
     for idx1 in llabels:
         minv = np.inf
         for idx2 in llabels:
             if idx1 != idx2:
-                val = traces[idx1, idx2] + sumcov[idx1, idx2] - centroids.shape[1]
+                val = traces[poslabels[idx1], poslabels[idx2]] + sumcov[poslabels[idx1], poslabels[idx2]] - centroids.shape[1]
                 if minv > val:
                     minv = val
         ssep += minv
@@ -338,7 +356,7 @@ def jeffrey_divergence_score(X, labels):
     scompact = 0.0
     for idx in llabels:
         center_mask = labels == idx
-        dvector = euclidean_distances(X[center_mask], centroids[idx], squared=True)
+        dvector = euclidean_distances(X[center_mask], centroids[poslabels[idx]], squared=True)
         scompact += dvector.max()
 
     return  scompact/ssep

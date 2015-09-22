@@ -101,7 +101,7 @@ class Discretizer(TransformerMixin):
         else:
             Y = X
 
-        self._transform(Y)
+        self.__transform(Y)
 
         return Y
 
@@ -116,7 +116,7 @@ class Discretizer(TransformerMixin):
             i += 1
         return i
 
-    def _transform(self, X):
+    def __transform(self, X):
         """
         Applies the discretization to all the attributes of the data matrix
 
@@ -144,7 +144,7 @@ class Discretizer(TransformerMixin):
         :return:
         """
 
-        return self.fit_transform(X, copy)
+        return self._transform(X, copy=copy)
 
 
     def fit_transform(self, X, copy=False):
@@ -156,5 +156,5 @@ class Discretizer(TransformerMixin):
         :return:
         """
         self._fit(X)
-        return self._transform(X, copy)
+        return self._transform(X, copy=copy)
 
