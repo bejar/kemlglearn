@@ -27,7 +27,7 @@ from sklearn.cluster import KMeans
 
 class Xu(BaseEstimator):
     """
-    Method for determining the number of clusers for numerical data defined in:
+    Method for determining the number of clusters for numerical data defined in:
 
     XU, L. (1997) Bayesian Ying-Yang Machine, clustering and Number of Clusters.
     Pattern Recognition Letters 18, 1167-1178

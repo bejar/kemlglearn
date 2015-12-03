@@ -14,7 +14,9 @@ cluster
 
 :Version: 
 
-:Created on: 22/12/2014 13:21 
+:Created on: 22/12/2014 13:21
+
+# 22/09/2015: Fix: The labels from a clusterer from scikit-learn are not always contiguous
 
 """
 
@@ -74,7 +76,7 @@ def scatter_matrices_scores(X, labels, indices=['CH']):
         center += np.sum(X[center_mask], axis=0)
         center /= center_mask.sum()
         ccentroid[poslabels[idx]] = center
-        dvector = euclidean_distances(centroid, ccentroid[idx], squared=True)
+        dvector = euclidean_distances(centroid, ccentroid[poslabels[idx]], squared=True)
         dist += dvector.sum() * center_mask.sum()
     SSB = dist / len(labels)
 
@@ -82,7 +84,7 @@ def scatter_matrices_scores(X, labels, indices=['CH']):
     dist = 0.0
     for idx in llabels:
         center_mask = labels == idx
-        dvector = euclidean_distances(X[center_mask], ccentroid[idx], squared=True)
+        dvector = euclidean_distances(X[center_mask], ccentroid[poslabels[idx]], squared=True)
         dist += dvector.sum()
 
     SSW = dist / len(labels)
@@ -195,7 +197,7 @@ def calinski_harabasz_score(X, labels):
     dist = 0.0
     for idx in llabels:
         center_mask = labels == idx
-        dvector = euclidean_distances(X[center_mask], ccentroid[idx], squared=True)
+        dvector = euclidean_distances(X[center_mask], ccentroid[poslabels[idx]], squared=True)
         dist += dvector.sum()
 
     SSW = dist / len(labels)
@@ -231,7 +233,7 @@ def zhao_chu_franti_score(X, labels):
         center_mask = labels == idx
         center += np.sum(X[center_mask], axis=0)
         center /= center_mask.sum()
-        ccentroid[idx] = center
+        ccentroid[poslabels[idx]] = center
         dvector = euclidean_distances(centroid, ccentroid[poslabels[idx]], squared=True)
         dist += dvector.sum() * center_mask.sum()
     SSB = dist / len(labels)
@@ -240,7 +242,7 @@ def zhao_chu_franti_score(X, labels):
     dist = 0.0
     for idx in llabels:
         center_mask = labels == idx
-        dvector = euclidean_distances(X[center_mask], ccentroid[idx], squared=True)
+        dvector = euclidean_distances(X[center_mask], ccentroid[poslabels[idx]], squared=True)
         dist += dvector.sum()
 
     SSW = dist / len(labels)
@@ -268,7 +270,7 @@ def davies_bouldin_score(X, labels):
         center_mask = labels == idx
         center += np.sum(X[center_mask], axis=0)
         center /= center_mask.sum()
-        centroids[idx] = center
+        centroids[poslabels[idx]] = center
 
     # Centroids distance matrix
     cdistances = euclidean_distances(centroids)
@@ -277,8 +279,8 @@ def davies_bouldin_score(X, labels):
     mdcentroid = np.zeros(nclust)
     for idx in llabels:
         center_mask = labels == idx
-        vdist = euclidean_distances(centroids[idx], X[center_mask])
-        mdcentroid[idx] = vdist.sum()/center_mask.sum()
+        vdist = euclidean_distances(centroids[poslabels[idx]], X[center_mask])
+        mdcentroid[poslabels[idx]] = vdist.sum()/center_mask.sum()
 
     # Compute the index
     dist = 0.0
@@ -316,7 +318,7 @@ def jeffrey_divergence_score(X, labels):
         center_mask = labels == idx
         center += np.sum(X[center_mask], axis=0)
         center /= center_mask.sum()
-        centroids[idx] = center
+        centroids[poslabels[idx]] = center
 
     lcovs = []
     linvcovs = []
