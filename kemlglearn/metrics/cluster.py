@@ -41,7 +41,7 @@ def maplabels(labels):
 
 def scatter_matrices_scores(X, labels, indices=['CH']):
     """
-    Computes differente indices obtained from the Within and Between scatter matrices
+    Computes different indices obtained from the Within and Between scatter matrices
 
     Includes:
         'SSW': Within scatter matrix score
@@ -425,3 +425,63 @@ def folkes_mallow_score(labels_true, labels_pred):
     N10 = np.sum(c2 * c2) - cc
 
     return (N11*1.0)/np.sqrt((N11+N01)*(N11+N10))
+
+def bhargavi_gowda_score(X, labels):
+    """
+    Score from:
+
+    Bhargavi, M. & Gowda, S. D. "A novel validity index with dynamic cut-off for determining true clusters"
+    Pattern Recognition , 2015, 48, 3673 - 3687
+
+    :param X:
+    :param labels:
+    :return:
+    """
+    llabels = np.unique(labels)
+    poslabels = maplabels(llabels)
+
+    nclust = len(llabels)
+    nex = len(labels)
+
+    # Centroid of the data
+
+    centroid = np.zeros((1, X.shape[1]))
+    centroid += np.sum(X, axis=0)
+    centroid /= X.shape[0]
+
+    # Compute SSB and intracluster distance
+    ccentroid = np.zeros((nclust, X.shape[1]))
+    dist = 0.0
+    for idx in llabels:
+        center = np.zeros((1, X.shape[1]))
+        center_mask = labels == idx
+        center += np.sum(X[center_mask], axis=0)
+        center /= center_mask.sum()
+        ccentroid[poslabels[idx]] = center
+        dvector = euclidean_distances(centroid, ccentroid[poslabels[idx]], squared=True)
+        dist += dvector.sum() * center_mask.sum()
+
+    SSB = dist / len(labels)
+
+    # Compute SSW
+    dist = 0.0
+    Intra = 0.0
+    for idx in llabels:
+        center_mask = labels == idx
+        dvector = euclidean_distances(X[center_mask], ccentroid[poslabels[idx]], squared=True)
+        dist += dvector.sum()
+        sdvector = euclidean_distances(X[center_mask], ccentroid[poslabels[idx]], squared=False)
+        Intra += sdvector.sum()
+
+    SSW = dist / len(labels)
+
+    SST = SSB + SSW
+
+
+    # Centroids distance matrix
+    cdistances = euclidean_distances(ccentroid, squared=False)
+
+    Inter = np.sum(cdistances)/(nclust**2)
+
+
+    return(np.abs((SSW/SSB)*SST) - (Intra/Inter) - (nex - nclust))
