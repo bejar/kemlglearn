@@ -32,9 +32,9 @@ LS = LaplacianScore(n_neighbors=10, bandwidth=0.05)
 
 LS.fit(X)
 
-print LS.scores_
+print(LS.scores_)
 best = LS.best_k_scores(2)
-print best
+print(best)
 
 fig = plt.figure()
 

@@ -25,7 +25,7 @@ import pprint
 
 def nested_item(depth, value):
     if depth <= 1:
-        print value
+        print(value)
         return [value]
     else:
         return [nested_item(depth - 1, value)]
@@ -104,7 +104,6 @@ def nested_partitions_distance2(p1, p2):
     :return:
 
     """
-
     if len(p1) >1 and len(p2) > 1:
         set1a = set(flatten(p1[0]))
         set1b = set(flatten(p1[1]))
@@ -152,7 +151,7 @@ def generate_partitions(data):
 
 def print_nested(l,p):
     if len(l) == 1:
-        print ' '*p, l
+        print(' '*p, l)
     else:
         for v in l:
             print_nested(v, p+1)
@@ -165,9 +164,9 @@ if __name__ == '__main__':
     b = generate_partitions(a)
     c = generate_partitions(a)
     # print_nested(b,0)
-    # print '---'
+    # print('---')
     # print_nested(c,0)
-    print nested_partitions_distance2(b, c)
+    print(nested_partitions_distance2(b, c))
 
 
 

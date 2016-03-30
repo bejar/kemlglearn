@@ -96,9 +96,9 @@ km.fit(X)
 
 # print variation_of_information_score(km.labels_, y_data)
 # print normalized_mutual_info_score(km.labels_, y_data)
-print jaccard_score(km.labels_, y_data)
-print folkes_mallow_score(km.labels_, y_data)
-print JaccardArandFolkes(km.labels_, y_data)
+print(jaccard_score(km.labels_, y_data))
+print(folkes_mallow_score(km.labels_, y_data))
+print(JaccardArandFolkes(km.labels_, y_data))
 
 # print DaviesBouldin(X, km.labels_)
 # print scatter_matrices_scores(X, km.labels_, ['Inertia'])

@@ -25,19 +25,19 @@ from sklearn.datasets import make_blobs, load_iris, make_circles
 
 X = load_iris()['data']
 
-print X.shape
+print(X.shape)
 
 disc = Discretizer(bins=3, method='frequency')
 
 disc.fit(X)
 
-print disc.intervals
+print(disc.intervals)
 
 disc = Discretizer(bins=3, method='equal')
 
 disc.fit(X)
 
-print disc.intervals
+print(disc.intervals)
 
 
 # Y = disc.transform(X, copy=True)

@@ -37,7 +37,7 @@ for nclust in range(2,10):
     km = KMeans(n_clusters=nclust)
     km.fit(X)
     v = jeffrey_divergence_score(X, km.labels_)
-    print nclust, v
+    print(nclust, v)
 
 #qe.fit(X['data'])
 

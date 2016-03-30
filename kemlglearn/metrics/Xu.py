@@ -62,15 +62,15 @@ class Xu(BaseEstimator):
             cluster.fit(X)
             ldistorsion.append(within_scatter_matrix_score(X, cluster.labels_))
 
-        print X.shape[1]
-        print ldistorsion
+        print(X.shape[1])
+        print(ldistorsion)
 
         PCF = []
         for x,y in zip(ldistorsion, lcl):
-            print x,y, np.power(y, 2.0/X.shape[1])
+            print(x,y, np.power(y, 2.0/X.shape[1]))
             PCF.append(x * np.power(y, 2.0/X.shape[1]))
 
-        print PCF
+        print(PCF)
 
         self._M = np.argmin(PCF)
-        print self._M
+        print(self._M)

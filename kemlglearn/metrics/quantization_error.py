@@ -58,7 +58,7 @@ class quantization_error(BaseEstimator):
         num = self._maxc * (np.log(lcl)*np.log(lcl)).sum()
         num -= logsum*logsum
 
-        print num
+        print(num)
         # compute the fractal dimension
         ldistorsion = []
         for i in range(1, self._maxc+1):
@@ -66,19 +66,19 @@ class quantization_error(BaseEstimator):
             cluster.fit(X)
             ldistorsion.append(cluster.inertia_/X.shape[0])
 
-        print ldistorsion
+        print(ldistorsion)
         den = self._maxc * (np.log(lcl) * np.log(ldistorsion)).sum()
         den -= (logsum * np.log(ldistorsion)).sum()
 
-        print den
+        print(den)
         self._fdim = 2 * num / den
 
-        print self._fdim
+        print(self._fdim)
         PCF = [x * np.power(y, 2/self._fdim) for x, y in zip(ldistorsion, lcl)]
 
-        print PCF
+        print(PCF)
 
         self._M = np.argmin(PCF)
-        print self._M
+        print(self._M)
 
 

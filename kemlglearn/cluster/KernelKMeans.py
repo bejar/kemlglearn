@@ -84,7 +84,7 @@ class KernelKMeans(BaseEstimator, ClusterMixin):
             n_same = np.sum((self.labels_ - labels_old) == 0)
             if 1 - float(n_same) / n_samples < self.tol:
                 if self.verbose:
-                    print "Converged at iteration", it + 1
+                    print("Converged at iteration", it + 1)
                 break
 
         self.X_fit_ = X
@@ -128,5 +128,5 @@ if __name__ == '__main__':
     X, y = make_blobs(n_samples=1000, centers=5, random_state=0)
 
     km = KernelKMeans(n_clusters=3, max_iter=100, random_state=0, verbose=1)
-    print km.fit_predict(X[:10])
-    print km.predict(X[:10])
+    print( km.fit_predict(X[:10]))
+    print(km.predict(X[:10]))
