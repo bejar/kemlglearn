@@ -33,6 +33,7 @@ class Leader(BaseEstimator, ClusterMixin, TransformerMixin):
         Clustering radius for asigning examples to a cluster
 
     """
+
     def __init__(self, radius):
         self.radius = radius
         self.cluster_centers_ = None
@@ -42,7 +43,7 @@ class Leader(BaseEstimator, ClusterMixin, TransformerMixin):
     def num_clusters(self):
         return self.cluster_centers_.shape[0]
 
-    def fit(self,X):
+    def fit(self, X):
         """
         Clusters the examples
         :param X:
@@ -53,7 +54,7 @@ class Leader(BaseEstimator, ClusterMixin, TransformerMixin):
 
         return self
 
-    def predict(self,X):
+    def predict(self, X):
         """
         Returns the nearest cluster for a data matrix
 
@@ -62,7 +63,7 @@ class Leader(BaseEstimator, ClusterMixin, TransformerMixin):
         """
         clasif = []
         for i in range(X.shape[0]):
-            ncl, mdist = self._find_nearest_cluster(X[i], self.cluster_centers_)
+            ncl, mdist = self._find_nearest_cluster(X[i].reshape(1, -1), self.cluster_centers_)
             if mdist <= self.radius:
                 clasif.append(ncl)
             else:
@@ -76,26 +77,26 @@ class Leader(BaseEstimator, ClusterMixin, TransformerMixin):
         :return:
         """
         assignments = []
-        scenters = np.zeros((1,X.shape[1]))
-        centers = np.zeros((1,X.shape[1]))
+        scenters = np.zeros((1, X.shape[1]))
+        centers = np.zeros((1, X.shape[1]))
         # Initialize with the first example
         scenters[0] = X[0]
         centers[0] = X[0]
         assignments.append([0])
         csizes = np.array([1])
         # Cluster the rest of examples
-        for i in range(1,X.shape[0]):
-            ncl,mdist = self._find_nearest_cluster(X[i], centers)
+        for i in range(1, X.shape[0]):
+            ncl, mdist = self._find_nearest_cluster(X[i].reshape(1, -1), centers)
 
             # if distance is less than radius, introduce example in nearest class
             if mdist <= self.radius:
                 scenters[ncl] += X[i]
                 csizes[ncl] += 1
-                centers[ncl] = scenters[ncl]/csizes[ncl]
+                centers[ncl] = scenters[ncl] / csizes[ncl]
                 assignments[ncl].append(i)
-            else: # Create a new cluster
-                scenters = np.append(scenters,np.array([X[i]]), 0)
-                centers = np.append(centers,np.array([X[i]]), 0)
+            else:  # Create a new cluster
+                scenters = np.append(scenters, np.array([X[i]]), 0)
+                centers = np.append(centers, np.array([X[i]]), 0)
                 csizes = np.append(csizes, [1], 0)
                 assignments.append([i])
 
@@ -114,7 +115,6 @@ class Leader(BaseEstimator, ClusterMixin, TransformerMixin):
         :param centers:
         :return:
         """
-
         dist = euclidean_distances(centers, examp)
 
         pmin = np.argmin(dist)
