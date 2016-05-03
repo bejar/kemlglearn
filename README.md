@@ -1,4 +1,4 @@
-kemlglearn 0.0.1a
+kemlglearn 0.3.2
 =================
 
 Different Machine learning algorithms in python trying 
