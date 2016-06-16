@@ -2,10 +2,11 @@ from distutils.core import setup
 
 setup(
     name='kemlglearn',
-    version='0.3.2',
+    version='0.3.4',
     packages=['kemlglearn',
               'kemlglearn.cluster',
               'kemlglearn.cluster.consensus',
+              'kemlglearn.cluster.border',
               'kemlglearn.metrics',
               'kemlglearn.datasets',
               'kemlglearn.feature_selection',
