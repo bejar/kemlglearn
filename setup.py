@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='kemlglearn',
-    version='0.3.4',
+    version='0.3.5',
     packages=['kemlglearn',
               'kemlglearn.cluster',
               'kemlglearn.cluster.consensus',

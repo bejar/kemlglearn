@@ -17,13 +17,13 @@ SAX
 
 """
 
-__author__ = 'bejar'
-
-
 import numpy as np
 from scipy.stats import norm
 
-class SAX():
+__author__ = 'bejar'
+
+
+class SAX:
     """
     Sax representation of the time series
     """
@@ -40,8 +40,6 @@ class SAX():
         self.voc = voc_size
         self.intervals = norm.ppf(np.arange(self.voc)/float(self.voc))
 
-
-    # Todo: Check that this works
     def transform(self, X):
         """
         Computes the SAX representation for a vector of data
@@ -62,7 +60,7 @@ class SAX():
         res = np.zeros((X.shape[0]//self.step-self.winlen, self.wrdlen))
 
         for w in range(X.shape[0]//self.winlen):
-            chunk = X[w*self.step, (w*self.step) + self.winlen]
+            chunk = X[w*self.step: (w*self.step) + self.winlen]
             res[w] = self._SAX_function(chunk, self.wrdlen, self.voc, self.intervals)
         return res
 
