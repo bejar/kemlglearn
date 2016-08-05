@@ -57,15 +57,16 @@ class SAX:
         :return: a vector with length values in the range [-voc//2,voc//2]
         """
 
-        res = np.zeros((X.shape[0]//self.step-self.winlen, self.wrdlen))
+        nwin = ((X.shape[0]-self.winlen)//self.step) + 1
+        res = np.zeros((nwin, self.wrdlen))
 
-        for w in range(X.shape[0]//self.winlen):
+        for w in range(nwin):
             chunk = X[w*self.step: (w*self.step) + self.winlen]
             res[w] = self._SAX_function(chunk, self.wrdlen, self.voc, self.intervals)
         return res
 
     @staticmethod
-    def _SAX_function(self, data, length, voc, intervals):
+    def _SAX_function(data, length, voc, intervals):
         """
         Computes the SAX representation for a vector of data
         The data is normalized before transformation

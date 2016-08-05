@@ -12,6 +12,7 @@ setup(
               'kemlglearn.feature_selection',
               'kemlglearn.feature_selection.unsupervised',
               'kemlglearn.preprocessing',
+              'kemlglearn.time_series',
               'kemlglearn.time_series.discretization'],
     url='http://www.cs.upc.edu/~bejar',
     license='GPL 2.0',
