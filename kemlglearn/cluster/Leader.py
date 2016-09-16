@@ -127,7 +127,7 @@ if __name__ == '__main__':
     X, y_data = make_circles(n_samples=1000, noise=0.5, random_state=4, factor=0.5)
     ld = Leader(radius=.01)
     ld.fit(X)
-    print ld.predict(np.array([[0,0]]))
+    print(ld.predict(np.array([[0,0]])))
 
 
 
