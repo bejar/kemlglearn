@@ -69,7 +69,7 @@ if __name__ == '__main__':
     X, y_data = make_blobs(n_samples=10000, n_features=5, centers=5, cluster_std=0.5, random_state=2)
 
     bd = QiuCaoBorder(X, 5, 0.2, 0.01)
-    print bd
+    print(bd)
     labels = np.zeros(X.shape[0])+1
     for i in bd:
         labels[i] = 5
