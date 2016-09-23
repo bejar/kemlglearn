@@ -85,11 +85,11 @@ class SAX:
         index = np.zeros(length)
         data -= data.mean(0)
         data = np.nan_to_num(data / data.std(0))
-        step = data.shape[0] / length
+        step = int(data.shape[0] / length)
         for i in range(length):
-            mr = np.sum(data[i*step:(i*step)+step])/length
+            mr = np.mean(data[i*step:(i*step)+step])
             j = voc - 1
             while mr < intervals[j]:
                 j -= 1
-            index[i] = j - (voc / 2)
+            index[i] = j - int(voc/2)
         return index
