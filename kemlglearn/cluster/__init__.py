@@ -21,7 +21,8 @@ from .Leader import Leader
 from .KernelKMeans import KernelKMeans
 from .KModes import KModes
 from .KPrototypes import KPrototypes
+from .KMedoidsFlexible import KMedoidsFlexible
 
 __all__ = ['GlobalKMeans',
            'Leader', 'KernelKMeans',
-           'KModes', 'KPrototypes']
+           'KModes', 'KPrototypes', 'KMedoidsFlexible']

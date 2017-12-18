@@ -20,25 +20,26 @@ __author__ = 'bejar'
 
 
 
-from Leader import Leader
-from GlobalKMeans import GlobalKMeans
+# from Leader import Leader
+# from GlobalKMeans import GlobalKMeans
 from sklearn.datasets import make_blobs, load_iris, make_circles
 import pylab as pl
 import matplotlib.pyplot as plt
-from sklearn.cluster import KMeans
-from kemlglearn.datasets import cluster_generator
+# from sklearn.cluster import KMeans
+# from kemlglearn.datasets import cluster_generator
 # from kemlglearn.metrics import within_scatter_matrix_score, between_scatter_matrix_score, calinski_harabasz_score,\
 #     zhao_chu_franti_score, scatter_matrices_scores, davies_bouldin_score, variation_of_information_score, \
 #     jaccard_score, JaccardArandFolkes, folkes_mallow_score
-from kemlglearn.cluster.consensus import SimpleConsensusClustering
-from sklearn.metrics.cluster import normalized_mutual_info_score
+# from kemlglearn.cluster.consensus import SimpleConsensusClustering
+# from sklearn.metrics.cluster import normalized_mutual_info_score
 
-#X, y_data = make_blobs(n_samples=100, n_features=10, centers=3, random_state=2)
-#X = load_iris()['data']
-X, y_data = make_circles(n_samples=1000, noise=0.5, random_state=4, factor=0.5)
+X, y_data = make_blobs(n_samples=200, n_features=10, centers=4, random_state=2)
+X , y_data= load_iris(return_X_y=True)
+
+# X, y_data = make_circles(n_samples=1000, noise=0.5, random_state=4, factor=0.5)
 
 
-nc = 12
+# nc = 12
 # _, X = cluster_generator(n_clusters=nc, sepval=0.01, numNonNoisy=15, numNoisy=3, rangeN=[50, 100])
 # ld = Leader(radius=25.0)
 #
@@ -57,8 +58,8 @@ nc = 12
 #
 # plt.show()
 
-gkm = GlobalKMeans(n_clusters=nc, algorithm='bagirov')
-gkm.fit(X)
+# gkm = GlobalKMeans(n_clusters=nc, algorithm='bagirov')
+# gkm.fit(X)
 # print DaviesBouldin(X, gkm.labels_)
 # print scatter_matrices_scores(X, gkm.labels_, ['Inertia'])
 
@@ -135,6 +136,27 @@ gkm.fit(X)
 # fig = plt.figure()
 #
 # ax = fig.add_subplot(111)
-# plt.scatter(X[:, 0], X[:, 1], c=simple.labels_)
+# plt.scatter(X[:, 0], X[:, 1], c=y_data)
 #
 # plt.show()
+
+from KMedoidsFlexible import KMedoidsFlexible
+
+km = KMedoidsFlexible(n_clusters=3)
+
+labels = km.fit_predict(X)
+
+fig = plt.figure()
+
+ax = fig.add_subplot(111)
+plt.scatter(X[:, 0], X[:, 1], c=labels)
+medoids = km.cluster_medoids_
+
+for i, m in enumerate(medoids):
+    plt.scatter(medoids[i, 0], medoids[i, 1], c=i, marker='x', s=200)
+
+plt.show()
+
+labels = km.predict(X)
+
+print(labels)

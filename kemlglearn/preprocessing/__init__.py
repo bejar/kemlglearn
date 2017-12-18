@@ -20,5 +20,5 @@ __init__.py
 __author__ = 'bejar'
 
 from .Discretizer import Discretizer
-
-__all__ = ['Discretizer']
+from .Imputer import KnnImputer
+__all__ = ['Discretizer', 'KnnImputer']

@@ -17,6 +17,8 @@ __init__.py
 
 """
 
+from .BorderDetection import QiuCaoBorder
+
 __author__ = 'bejar'
 
 __all__ = ['QiuCaoBorder']

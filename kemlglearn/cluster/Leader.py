@@ -27,7 +27,9 @@ from sklearn.metrics.pairwise import euclidean_distances
 class Leader(BaseEstimator, ClusterMixin, TransformerMixin):
     """Leader Algorithm Clustering
 
-    Paramerets:
+    Partition of a dataset using the leader algorithm
+
+    Parameters:
 
     radius: float
         Clustering radius for asigning examples to a cluster
