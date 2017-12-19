@@ -17,11 +17,14 @@ KMedoidsFlexible
 
 """
 
+from __future__ import division
+
 __author__ = 'bejar'
 
 
 import numpy as np
 from sklearn.base import BaseEstimator, ClusterMixin, TransformerMixin
+from sklearn.cluster import KMeans
 from sklearn.metrics.pairwise import euclidean_distances
 from numpy.random import choice
 
@@ -40,13 +43,12 @@ class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
     datasets
     """
 
-    def __init__(self, n_clusters=3, max_iter=50, tol=1e-3, distance=euclidean_distances, random_state=None):
+    def __init__(self, n_clusters=3, max_iter=50, distance=euclidean_distances, random_state=None):
         self.cluster_medoids_ = None
         self.labels_ = None
         self.distance_ = distance
         self.nclusters_ = n_clusters
         self.max_iter_ = max_iter
-        self.tol_ = tol
         self.distance_matrix_ = None
         self.random_ = random_state
 
@@ -90,39 +92,39 @@ class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
         :return:
         """
 
-        self.distance_matrix_ = np.zeros(X.shape[0] * (X.shape[0] - 1) / 2)
+        self.distance_matrix_ = np.zeros(X.shape[0] * (X.shape[0] - 1) // 2)
         self.nexamp_ = X.shape[0]
         for i in range(X.shape[0]):
             for j in range(i+1, X.shape[0]):
                 self.distance_matrix_[self.sel(i, j)] = self.distance_(X[i].reshape(1, -1), X[j].reshape(1, -1))
 
-        # print(self.distance_matrix_)
-        # TODO: Add more initialization options
-        # Initializes the medoids randomly
-        medoids = np.array(choice(range(X.shape[0]), self.nclusters_, replace=False))
+        # Initializes the medoids using k-means
+        km = KMeans(n_clusters=self.nclusters_)
+        assignments = km.fit_predict(X)
+        medoids = np.zeros(self.nclusters_, dtype=int)-1
         for i in range(self.max_iter_):
-            assignments, new_medoids = self._kmedoids_iter(X, medoids)
+            new_medoids = self._kmedoids_iter(X, assignments)
+            print(medoids, new_medoids)
             if np.array_equal(new_medoids, medoids):
                 break
             else:
                 medoids = new_medoids
 
+            for i in range(X.shape[0]):
+                assignments[i] = self._find_nearest_medoid(i, medoids)
+            print(medoids)
+
         self.cluster_medoids_ = X[medoids, :]
 
         return assignments
 
-    def _kmedoids_iter(self, X, medoids):
+    def _kmedoids_iter(self, X, assignments):
         """
         One iteration of k medoids
         :param X:
         :param medoids:
         :return:
         """
-        assignments = np.zeros(X.shape[0], dtype=int)
-
-        for i in range(X.shape[0]):
-            assignments[i] = self._find_nearest_medoid(i, medoids)
-
         lassign = [[] for i in range(self.nclusters_)]
         for i in range(X.shape[0]):
             lassign[assignments[i]].append(i)
@@ -132,12 +134,12 @@ class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
         for i, ass in enumerate(lassign):
             mndist = np.inf
             for a1 in ass:
-                mddist = np.sum([self.sel_distance(a1, c) for c in ass])/(len(ass)-1)
+                mddist = np.sum([self.sel_distance(a1, c) for c in ass])
                 if mddist < mndist:
                     new_medoids[i] = a1
                     mndist = mddist
 
-        return assignments, new_medoids
+        return new_medoids
 
     def _find_nearest_medoid(self, examp, centers):
         """
@@ -149,7 +151,7 @@ class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
         return np.argmin([self.sel_distance(examp, c) for c in centers])
 
     def sel(self, i, j):
-        return self.nexamp_ * i - (i * (i+1)/2) + (j -i) - 1
+        return self.nexamp_ * i - (i * (i+1)//2) + (j -i) - 1
 
     def sel_distance(self, i, j):
         """
@@ -165,6 +167,6 @@ class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
         if i == j:
             return 0
         elif i < j:
-            return self.distance_matrix_[self.nexamp_ * i - (i * (i+1)/2) + (j -i) - 1]
+            return self.distance_matrix_[self.nexamp_ * i - (i * (i+1)//2) + (j -i) - 1]
         else:
-            return self.distance_matrix_[self.nexamp_ * j - (j * (j+1)/2) + (i -j) - 1]
+            return self.distance_matrix_[self.nexamp_ * j - (j * (j+1)//2) + (i -j) - 1]

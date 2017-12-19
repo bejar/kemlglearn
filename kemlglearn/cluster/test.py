@@ -22,8 +22,9 @@ __author__ = 'bejar'
 
 # from Leader import Leader
 # from GlobalKMeans import GlobalKMeans
-from sklearn.datasets import make_blobs, load_iris, make_circles
+from sklearn.datasets import load_iris, make_circles
 import pylab as pl
+from kemlglearn.datasets import make_blobs
 import matplotlib.pyplot as plt
 # from sklearn.cluster import KMeans
 # from kemlglearn.datasets import cluster_generator
@@ -33,8 +34,8 @@ import matplotlib.pyplot as plt
 # from kemlglearn.cluster.consensus import SimpleConsensusClustering
 # from sklearn.metrics.cluster import normalized_mutual_info_score
 
-X, y_data = make_blobs(n_samples=200, n_features=10, centers=4, random_state=2)
-X , y_data= load_iris(return_X_y=True)
+X, y_data = make_blobs(n_samples=[25, 200], n_features=2, centers=[[1,1], [0,0]], random_state=2, cluster_std=[0.1, 0.4])
+# X , y_data= load_iris(return_X_y=True)
 
 # X, y_data = make_circles(n_samples=1000, noise=0.5, random_state=4, factor=0.5)
 
@@ -139,10 +140,23 @@ X , y_data= load_iris(return_X_y=True)
 # plt.scatter(X[:, 0], X[:, 1], c=y_data)
 #
 # plt.show()
+from numpy.random import normal
+import numpy as np
+sc1=75
+v1=0.1
+sc2=75
+v2=0.9
+X = np.zeros((sc1 + sc2, 2))
+X[0:sc1, 0] = normal(loc=0.0, scale=v1, size=sc1)
+X[0:sc1, 1] = normal(loc=0.0, scale=v2, size=sc1)
+X[sc1:, 0] = normal(loc=1, scale=v1, size=sc2)
+X[sc1:, 1] = normal(loc=0.0, scale=v2, size=sc2)
+dlabels = np.zeros(sc1 + sc2)
+dlabels[sc1:] = 1
 
 from KMedoidsFlexible import KMedoidsFlexible
 
-km = KMedoidsFlexible(n_clusters=3)
+km = KMedoidsFlexible(n_clusters=2)
 
 labels = km.fit_predict(X)
 
