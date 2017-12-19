@@ -154,7 +154,7 @@ X[sc1:, 1] = normal(loc=0.0, scale=v2, size=sc2)
 dlabels = np.zeros(sc1 + sc2)
 dlabels[sc1:] = 1
 
-from KMedoidsFlexible import KMedoidsFlexible
+from .KMedoidsFlexible import KMedoidsFlexible
 
 km = KMedoidsFlexible(n_clusters=2)
 
