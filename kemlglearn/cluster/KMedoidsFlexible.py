@@ -21,10 +21,11 @@ from __future__ import division
 
 __author__ = 'bejar'
 
-
 from sklearn.base import BaseEstimator, ClusterMixin, TransformerMixin
 from sklearn.metrics.pairwise import euclidean_distances
 from numpy.random import choice
+import numpy as np
+
 
 class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
     """K-Medoids algorithm with distance as a parameter
@@ -103,11 +104,11 @@ class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
             self.distance_matrix_ = X
             self.nexamp_ = int(np.sqrt(X.shape[0] * 2)) + 1
         else:  # A distance function
-            self.distance_matrix_ = np.zeros(X.shape[0] * (X.shape[0] - 1) // 2)
             self.nexamp_ = X.shape[0]
+            self.distance_matrix_ = np.zeros(self.nexamp_ * (self.nexamp_ - 1) // 2)
             # Condensed distance matrix computation
             for i in range(self.nexamp_):
-                for j in range(i+1, X.shape[0]):
+                for j in range(i+1, self.nexamp_):
                     self.distance_matrix_[self.sel(i, j)] = self.distance_(X[i].reshape(1, -1), X[j].reshape(1, -1))
 
         # TODO: Implement K-means++ initialization strategy
@@ -192,7 +193,7 @@ if __name__ == '__main__':
     from sklearn.metrics import pairwise
     import matplotlib.pyplot as plt
     from numpy.random import normal
-    import numpy as np
+
     sc1=75
     v1=0.1
     sc2=75
