@@ -22,9 +22,7 @@ from __future__ import division
 __author__ = 'bejar'
 
 
-import numpy as np
 from sklearn.base import BaseEstimator, ClusterMixin, TransformerMixin
-from sklearn.cluster import KMeans
 from sklearn.metrics.pairwise import euclidean_distances
 from numpy.random import choice
 
@@ -38,9 +36,13 @@ class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
     n_clusters: int
     max_iter: int
     tol: float
-    distance: distance function for the computation
-    Precomputes the distance for faster computation, but needs a quadratic amount of memory so can not be used for large
-    datasets
+    distance: function or "precomputed"
+
+       receives a distance function for the computation able to return array x array distances, it Precomputes the
+       distance matrix for faster computation when fit/fit_predict is called, but needs a quadratic amount of memory
+       so can not be used for large datasets
+
+       if it is "precomputed" then the data is assumed to be the distance matrix (in condensed form, upper triangular)
     """
 
     def __init__(self, n_clusters=3, max_iter=50, distance=euclidean_distances, random_state=None):
@@ -58,9 +60,11 @@ class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
         :param X:
         :return:
         """
-        self._fit_process(X)
-
-        return self
+        if self.distance_ == 'precomputed':
+            raise NameError('For precomputed distance use fit_predict')
+        else:
+            self._fit_process(X)
+            return self
 
     def fit_predict(self, X):
         """
@@ -80,10 +84,13 @@ class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
         @param X:
         @return:
         """
-        clasif = []
-        for i in range(X.shape[0]):
-            clasif.append(np.argmin(self.distance_(X[i].reshape(1, -1), self.cluster_medoids_)))
-        return clasif
+        if self.distance_ == 'precomputed':
+            raise NameError('Cannot predict for new data with precomputed distance')
+        else:
+            clasif = []
+            for i in range(X.shape[0]):
+                clasif.append(np.argmin(self.distance_(X[i].reshape(1, -1), self.cluster_medoids_)))
+            return clasif
 
     def _fit_process(self, X):
         """
@@ -92,16 +99,23 @@ class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
         :return:
         """
 
-        self.distance_matrix_ = np.zeros(X.shape[0] * (X.shape[0] - 1) // 2)
-        self.nexamp_ = X.shape[0]
-        for i in range(X.shape[0]):
-            for j in range(i+1, X.shape[0]):
-                self.distance_matrix_[self.sel(i, j)] = self.distance_(X[i].reshape(1, -1), X[j].reshape(1, -1))
+        if self.distance_ == 'precomputed':
+            self.distance_matrix_ = X
+            self.nexamp_ = int(np.sqrt(X.shape[0] * 2)) + 1
+        else:  # A distance function
+            self.distance_matrix_ = np.zeros(X.shape[0] * (X.shape[0] - 1) // 2)
+            self.nexamp_ = X.shape[0]
+            # Condensed distance matrix computation
+            for i in range(self.nexamp_):
+                for j in range(i+1, X.shape[0]):
+                    self.distance_matrix_[self.sel(i, j)] = self.distance_(X[i].reshape(1, -1), X[j].reshape(1, -1))
 
-        # Initializes the medoids using k-means
-        km = KMeans(n_clusters=self.nclusters_)
-        assignments = km.fit_predict(X)
-        medoids = np.zeros(self.nclusters_, dtype=int)-1
+        # TODO: Implement K-means++ initialization strategy
+        # Initializes the medoids randomly
+        medoids = np.array(choice(range(self.nexamp_), self.nclusters_, replace=False), dtype=int)
+        assignments = np.zeros(self.nexamp_, dtype=int)
+        for j in range(self.nexamp_):
+            assignments[j] = self._find_nearest_medoid(j, medoids)
 
         for i in range(self.max_iter_):
             new_medoids = self._kmedoids_iter(assignments)
@@ -110,11 +124,14 @@ class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
                 break
             else:
                 medoids = new_medoids
-            for j in range(X.shape[0]):
+            for j in range(self.nexamp_):
                 assignments[j] = self._find_nearest_medoid(j, new_medoids)
 
-
-        self.cluster_medoids_ = X[medoids, :]
+        if self.distance_ == 'precomputed':
+            # If distance is precomputed we store the indices corresponding to the medoids
+            self.cluster_medoids_ = medoids
+        else:
+            self.cluster_medoids_ = X[medoids, :]
 
         return assignments
 
@@ -157,12 +174,9 @@ class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
         """
         Selects the distance between two examples from the distance matrix
 
-        Prec: i < j
-
-        :param d:
-        :param i:
-        :param j:
-        :return:
+        :param i: int
+        :param j: int
+        :return: float
         """
         if i == j:
             return 0
@@ -174,6 +188,8 @@ class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
 
 if __name__ == '__main__':
     from kemlglearn.datasets import make_blobs
+    from scipy.spatial import distance
+    from sklearn.metrics import pairwise
     import matplotlib.pyplot as plt
     from numpy.random import normal
     import numpy as np
@@ -188,10 +204,16 @@ if __name__ == '__main__':
     X[sc1:, 1] = normal(loc=0.0, scale=v2, size=sc2)
     dlabels = np.zeros(sc1 + sc2)
     dlabels[sc1:] = 1
+    cosine = lambda x,y: distance.cdist(x,y, metric='braycurtis')
 
-    km = KMedoidsFlexible(n_clusters=2)
 
-    labels = km.fit_predict(X)
+    # km = KMedoidsFlexible(n_clusters=2, distance=cosine)
+    # labels = km.fit_predict(X)
+    km = KMedoidsFlexible(n_clusters=2, distance='precomputed')
+    D = cosine(X,X)
+    D = distance.squareform(D, force='tovector', checks=False)
+    labels = km.fit_predict(D)
+
 
     fig = plt.figure()
 
@@ -200,12 +222,11 @@ if __name__ == '__main__':
     medoids = km.cluster_medoids_
 
     for i, m in enumerate(medoids):
-        plt.scatter(medoids[i, 0], medoids[i, 1], c=i, marker='x', s=200)
+        # plt.scatter(medoids[i, 0], medoids[i, 1], c=i, marker='x', s=200)
+        plt.scatter(X[m, 0], X[m, 1], c=i, marker='x', s=200)
 
-    plt.ylim(-2,2)
-    plt.xlim(-2,2)
+    plt.ylim(-3,3)
+    plt.xlim(-3,3)
     plt.show()
-
-    labels = km.predict(X)
 
     print(labels)
