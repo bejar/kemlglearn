@@ -49,7 +49,7 @@ class SAX:
         points at the end will be ignored
 
         The intervals for the discretization are computed on every call
-        :param length: Length of the wore
+        :param length: Length of the word
         :param voc: Length of the vocabulary
         :param intervals: list with the breakpoints of the discretization
                           if the parameter does not exist the intervals are
