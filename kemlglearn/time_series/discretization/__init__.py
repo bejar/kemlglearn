@@ -22,4 +22,5 @@ __author__ = 'bejar'
 
 from .SAX import SAX
 from .BOSS import Boss
+
 __all__ = ['SAX', 'Boss']
