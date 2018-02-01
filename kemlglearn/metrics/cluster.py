@@ -76,7 +76,7 @@ def scatter_matrices_scores(X, labels, indices=['CH']):
         center += np.sum(X[center_mask], axis=0)
         center /= center_mask.sum()
         ccentroid[poslabels[idx]] = center
-        dvector = euclidean_distances(centroid, ccentroid[poslabels[idx]], squared=True)
+        dvector = euclidean_distances(centroid.reshape(1, -1), ccentroid[poslabels[idx]].reshape(1, -1), squared=True)
         dist += dvector.sum() * center_mask.sum()
     SSB = dist / len(labels)
 
@@ -84,7 +84,7 @@ def scatter_matrices_scores(X, labels, indices=['CH']):
     dist = 0.0
     for idx in llabels:
         center_mask = labels == idx
-        dvector = euclidean_distances(X[center_mask], ccentroid[poslabels[idx]], squared=True)
+        dvector = euclidean_distances(X[center_mask], ccentroid[poslabels[idx]].reshape(1, -1), squared=True)
         dist += dvector.sum()
 
     SSW = dist / len(labels)
@@ -131,7 +131,7 @@ def within_scatter_matrix_score(X, labels):
         center_mask = labels == idx
         center += np.sum(X[center_mask], axis=0)
         center /= center_mask.sum()
-        dvector = euclidean_distances(X[center_mask], center, squared=True)
+        dvector = euclidean_distances(X[center_mask].reshape(1, -1), center, squared=True)
         dist += dvector.sum()
     return dist / len(labels)
 
@@ -158,7 +158,7 @@ def between_scatter_matrix_score(X, labels):
         center_mask = labels == idx
         center += np.sum(X[center_mask], axis=0)
         center /= center_mask.sum()
-        dvector = euclidean_distances(centroid, center, squared=True)
+        dvector = euclidean_distances(centroid.reshape(1, -1), center.reshape(1, -1), squared=True)
         dist += dvector.sum() * center_mask.sum()
     return dist / len(labels)
 
@@ -189,7 +189,7 @@ def calinski_harabasz_score(X, labels):
         center += np.sum(X[center_mask], axis=0)
         center /= center_mask.sum()
         ccentroid[poslabels[idx]] = center
-        dvector = euclidean_distances(centroid, ccentroid[poslabels[idx]], squared=True)
+        dvector = euclidean_distances(centroid.reshape(1, -1), ccentroid[poslabels[idx]].reshape(1, -1), squared=True)
         dist += dvector.sum() * center_mask.sum()
     SSB = dist / len(labels)
 
@@ -197,7 +197,7 @@ def calinski_harabasz_score(X, labels):
     dist = 0.0
     for idx in llabels:
         center_mask = labels == idx
-        dvector = euclidean_distances(X[center_mask], ccentroid[poslabels[idx]], squared=True)
+        dvector = euclidean_distances(X[center_mask], ccentroid[poslabels[idx]].reshape(1, -1), squared=True)
         dist += dvector.sum()
 
     SSW = dist / len(labels)
@@ -234,7 +234,7 @@ def zhao_chu_franti_score(X, labels):
         center += np.sum(X[center_mask], axis=0)
         center /= center_mask.sum()
         ccentroid[poslabels[idx]] = center
-        dvector = euclidean_distances(centroid, ccentroid[poslabels[idx]], squared=True)
+        dvector = euclidean_distances(centroid.reshape(1, -1), ccentroid[poslabels[idx]].reshape(1, -1), squared=True)
         dist += dvector.sum() * center_mask.sum()
     SSB = dist / len(labels)
 
@@ -242,7 +242,7 @@ def zhao_chu_franti_score(X, labels):
     dist = 0.0
     for idx in llabels:
         center_mask = labels == idx
-        dvector = euclidean_distances(X[center_mask], ccentroid[poslabels[idx]], squared=True)
+        dvector = euclidean_distances(X[center_mask], ccentroid[poslabels[idx]].reshape(1, -1), squared=True)
         dist += dvector.sum()
 
     SSW = dist / len(labels)
@@ -279,7 +279,7 @@ def davies_bouldin_score(X, labels):
     mdcentroid = np.zeros(nclust)
     for idx in llabels:
         center_mask = labels == idx
-        vdist = euclidean_distances(centroids[poslabels[idx]], X[center_mask])
+        vdist = euclidean_distances(centroids[poslabels[idx]].reshape(1, -1), X[center_mask])
         mdcentroid[poslabels[idx]] = vdist.sum()/center_mask.sum()
 
     # Compute the index
@@ -458,7 +458,7 @@ def bhargavi_gowda_score(X, labels):
         center += np.sum(X[center_mask], axis=0)
         center /= center_mask.sum()
         ccentroid[poslabels[idx]] = center
-        dvector = euclidean_distances(centroid, ccentroid[poslabels[idx]], squared=True)
+        dvector = euclidean_distances(centroid.reshape(1, -1), ccentroid[poslabels[idx]].reshape(1, -1), squared=True)
         dist += dvector.sum() * center_mask.sum()
 
     SSB = dist / len(labels)
@@ -468,9 +468,9 @@ def bhargavi_gowda_score(X, labels):
     Intra = 0.0
     for idx in llabels:
         center_mask = labels == idx
-        dvector = euclidean_distances(X[center_mask], ccentroid[poslabels[idx]], squared=True)
+        dvector = euclidean_distances(X[center_mask], ccentroid[poslabels[idx]].reshape(1, -1), squared=True)
         dist += dvector.sum()
-        sdvector = euclidean_distances(X[center_mask], ccentroid[poslabels[idx]], squared=False)
+        sdvector = euclidean_distances(X[center_mask], ccentroid[poslabels[idx]].reshape(1, -1), squared=False)
         Intra += sdvector.sum()
 
     SSW = dist / len(labels)
