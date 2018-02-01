@@ -308,7 +308,7 @@ class KModes(object):
                     self.max_iter, self.verbose)
         return self
 
-    def fit_predict(self, X, y=None):
+    def fit_predict(self, X):
         """Compute cluster centroids and predict cluster index for each sample.
 
         Convenience method; equivalent to calling fit(X) followed by

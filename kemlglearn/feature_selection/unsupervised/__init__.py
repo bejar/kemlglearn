@@ -18,3 +18,8 @@ __init__.py
 """
 
 __author__ = 'bejar'
+
+from .LaplacianScore import LaplacianScore
+
+
+__all__ = ['LaplacianScore']

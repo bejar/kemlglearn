@@ -26,9 +26,11 @@ from sklearn.cluster import KMeans, SpectralClustering
 from sklearn.metrics import adjusted_mutual_info_score, adjusted_rand_score, v_measure_score
 from sklearn.manifold import MDS, TSNE, SpectralEmbedding
 
+
 class MeanPartitionClustering(BaseEstimator, ClusterMixin, TransformerMixin):
     """Consensus Clustering Algorithm based on the estimation of the mean partition
     """
+
     def __init__(self, n_clusters, base='kmeans', n_components=10, cdistance='ANMI', trans='spectral', n_neighbors=5):
         self.n_clusters = n_clusters
         self.cluster_centers_ = None
@@ -48,7 +50,7 @@ class MeanPartitionClustering(BaseEstimator, ClusterMixin, TransformerMixin):
         """
         baseclust = [y]
         if self.base == 'kmeans':
-            km = KMeans(n_clusters=self.n_clusters, n_jobs=-1)
+            km = KMeans(n_clusters=self.n_clusters, n_init=1)
         l = ['r']
 
         for i in range(self.n_components):
@@ -64,11 +66,10 @@ class MeanPartitionClustering(BaseEstimator, ClusterMixin, TransformerMixin):
         elif self.cdistance == 'vmeasure':
             dfun = v_measure_score
 
-        for i in range(self.n_components-1):
-            for j in range(i+1, self.n_components):
+        for i in range(self.n_components - 1):
+            for j in range(i + 1, self.n_components):
                 mdist[i, j] = dfun(baseclust[i], baseclust[j])
                 mdist[j, i] = mdist[i, j]
-
 
         if self.trans == 'MDS':
             embed = MDS(dissimilarity='precomputed')

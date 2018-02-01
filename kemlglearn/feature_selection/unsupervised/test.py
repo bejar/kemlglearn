@@ -19,7 +19,7 @@ test
 
 __author__ = 'bejar'
 
-from LaplacianScore import LaplacianScore
+from amltlearn.feature_selection.unsupervised import LaplacianScore
 
 from sklearn.datasets import make_blobs
 import pylab as pl

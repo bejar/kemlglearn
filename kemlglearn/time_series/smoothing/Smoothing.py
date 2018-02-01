@@ -281,8 +281,8 @@ def tvdip(y, lambdas, display=1, stoptol=1e-3, maxiter=60):
                 newResidual = np.vstack((newResDual, newResCent))
 
                 if (np.maximum(newf1.max(0), newf2.max(0)) < 0
-                    and (scp.linalg.norm(newResidual) <=
-                                 (1 - ALPHA * step) * scp.linalg.norm(residual))):
+                        and (scp.linalg.norm(newResidual) <=
+                             (1 - ALPHA * step) * scp.linalg.norm(residual))):
                     break
 
                 step = BETA * step

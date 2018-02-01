@@ -19,7 +19,6 @@ GlobalKMeans
 
 __author__ = 'bejar'
 
-
 import numpy as np
 from sklearn.base import BaseEstimator, ClusterMixin, TransformerMixin
 from sklearn.metrics.pairwise import euclidean_distances
@@ -39,6 +38,7 @@ class GlobalKMeans(BaseEstimator, ClusterMixin, TransformerMixin):
         'bagirov' the Bagirov 2006 variant
 
     """
+
     def __init__(self, n_clusters, algorithm='classical'):
         self.n_clusters = n_clusters
         self.cluster_centers_ = None
@@ -47,7 +47,7 @@ class GlobalKMeans(BaseEstimator, ClusterMixin, TransformerMixin):
         self.inertia_ = None
         self.algorithm = algorithm
 
-    def fit(self,X):
+    def fit(self, X):
         """
         Clusters the examples
         :param X:
@@ -61,7 +61,7 @@ class GlobalKMeans(BaseEstimator, ClusterMixin, TransformerMixin):
 
         return self
 
-    def predict(self,X):
+    def predict(self, X):
         """
         Returns the nearest cluster for a data matrix
 
@@ -77,7 +77,6 @@ class GlobalKMeans(BaseEstimator, ClusterMixin, TransformerMixin):
                 clasif.append(-1)
         return clasif
 
-
     def _fit_process(self, X):
         """
         Classical global k-means algorithm
@@ -87,14 +86,14 @@ class GlobalKMeans(BaseEstimator, ClusterMixin, TransformerMixin):
         """
 
         # Compute the centroid of the dataset
-        centroids = sum(X)/X.shape[0]
+        centroids = sum(X) / X.shape[0]
         centroids.shape = (1, X.shape[1])
 
-        for i in range(2, self.n_clusters+1):
+        for i in range(2, self.n_clusters + 1):
             mininertia = np.infty
             for j in range(X.shape[0]):
                 newcentroids = np.vstack((centroids, X[j]))
-                #print newcentroids.shape
+                # print newcentroids.shape
                 km = KMeans(n_clusters=i, init=newcentroids, n_init=1)
                 km.fit(X)
                 if mininertia > km.inertia_:
@@ -116,7 +115,7 @@ class GlobalKMeans(BaseEstimator, ClusterMixin, TransformerMixin):
         self._neighbors.fit(X)
 
         # Compute the centroid of the dataset
-        centroids = sum(X)/X.shape[0]
+        centroids = sum(X) / X.shape[0]
         assignments = [0 for i in range(X.shape[0])]
 
         centroids.shape = (1, X.shape[1])
@@ -124,16 +123,18 @@ class GlobalKMeans(BaseEstimator, ClusterMixin, TransformerMixin):
         # compute the distance of the examples to the centroids
         mindist = np.zeros(X.shape[0])
         for i in range(X.shape[0]):
-            mindist[i] = euclidean_distances(X[i].reshape(1, -1), centroids[assignments[i]].reshape(1, -1), squared=True)[0]
+            mindist[i] = \
+            euclidean_distances(X[i].reshape(1, -1), centroids[assignments[i]].reshape(1, -1), squared=True)[0]
 
-        for k in range(2, self.n_clusters+1):
+        for k in range(2, self.n_clusters + 1):
             newCentroid = self._compute_next_centroid(X, centroids, assignments, mindist)
-            centroids = np.vstack((centroids,newCentroid))
+            centroids = np.vstack((centroids, newCentroid))
             km = KMeans(n_clusters=k, init=centroids, n_init=1)
             km.fit(X)
             assignments = km.labels_
             for i in range(X.shape[0]):
-                mindist[i] = euclidean_distances(X[i].reshape(1, -1), centroids[assignments[i]].reshape(1, -1), squared=True)[0]
+                mindist[i] = \
+                euclidean_distances(X[i].reshape(1, -1), centroids[assignments[i]].reshape(1, -1), squared=True)[0]
 
         return km.cluster_centers_, km.labels_, km.inertia_
 
@@ -152,7 +153,7 @@ class GlobalKMeans(BaseEstimator, ClusterMixin, TransformerMixin):
         for i in range(X.shape[0]):
             distance = euclidean_distances(X[i].reshape(1, -1), centroids[assignments[i]].reshape(1, -1))[0]
             S2 = self._neighbors.radius_neighbors(X[i].reshape(1, -1), radius=distance, return_distance=False)[0]
-            S2centroid = np.sum(X[S2], axis=0)/len(S2)
+            S2centroid = np.sum(X[S2], axis=0) / len(S2)
             S2centroid.shape = (1, X.shape[1])
             cost = self._compute_fk(X, mindist, S2centroid)
 
@@ -167,7 +168,7 @@ class GlobalKMeans(BaseEstimator, ClusterMixin, TransformerMixin):
             if newDist[i] < mindist[i]:
                 S2.append(i)
 
-        newCentroid = sum(X[S2])/len(S2)
+        newCentroid = sum(X[S2]) / len(S2)
         newCentroid.shape = (1, X.shape[1])
 
         while not (candCentroid == newCentroid).all():
@@ -178,11 +179,10 @@ class GlobalKMeans(BaseEstimator, ClusterMixin, TransformerMixin):
                 if newDist[i] < mindist[i]:
                     S2.append(i)
 
-            newCentroid = np.sum(X[S2], axis=0)/len(S2)
+            newCentroid = np.sum(X[S2], axis=0) / len(S2)
             newCentroid.shape = (1, X.shape[1])
 
         return candCentroid
-
 
     def _compute_fk(self, X, mindist, ccentroid):
         """
@@ -202,7 +202,6 @@ class GlobalKMeans(BaseEstimator, ClusterMixin, TransformerMixin):
             fk = fk + min(mindist[i], centdist[i][0])
 
         return fk
-
 
     @staticmethod
     def _find_nearest_cluster(examp, centers):
