@@ -162,9 +162,14 @@ sns.set()
 
 # NCI60 Dataset
 import pandas as pd
-tmp = pd.read_csv("https://raw.githubusercontent.com/hyunblee/"
-                  "ISLR-with-Python/master/Data/NCI60_data.csv")
-data = tmp.iloc[:, 1:].values
+nci_data = pd.read_csv("https://raw.githubusercontent.com/hyunblee/"
+                        "ISLR-with-Python/master/Data/NCI60_data.csv",
+                       header=0, index_col=0)
+nci_labs = pd.read_csv("https://raw.githubusercontent.com/hyunblee/"
+                       "ISLR-with-Python/master/Data/NCI60_labs.csv",
+                       header=0, index_col=0)
+
+data = nci_data.values
 n = 8
 
 lscores = []
