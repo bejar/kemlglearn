@@ -117,7 +117,7 @@ ypred = lSL.fit_predict(moons_data)
 
 toc = time.time()
 print toc-tic
-# 113.437999964
+# 102.523000002
 
 cmap = sns.color_palette(n_colors=np.unique(ypred).size)
 colors = np.array(cmap)[ypred]
@@ -174,5 +174,6 @@ ax2.set_ylabel('Adjusted Rand Score')
 ax2.tick_params('y', colors=cmap[2])
 # ax2.set_yticks(ar_scores)
 
+plt.title("leader-Single-Link parameter search: NCI60 dataset")
 # plt.show()
 plt.savefig("lSL_NCI60.png")
