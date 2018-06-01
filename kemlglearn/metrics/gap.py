@@ -163,7 +163,7 @@ sns.set()
 # NCI60 Dataset
 import pandas as pd
 nci_data = pd.read_csv("https://raw.githubusercontent.com/hyunblee/"
-                        "ISLR-with-Python/master/Data/NCI60_data.csv",
+                       "ISLR-with-Python/master/Data/NCI60_data.csv",
                        header=0, index_col=0)
 nci_labs = pd.read_csv("https://raw.githubusercontent.com/hyunblee/"
                        "ISLR-with-Python/master/Data/NCI60_labs.csv",
