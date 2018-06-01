@@ -1,4 +1,4 @@
-from scipy.cluster.hierarchy import linkage, cut_tree
+from scipy.cluster.hierarchy import linkage, cut_tree, dendrogram
 from Leader import Leader
 
 import matplotlib.pyplot as plt
@@ -138,10 +138,20 @@ nci_labs = pd.read_csv("https://raw.githubusercontent.com/hyunblee/"
                        "ISLR-with-Python/master/Data/NCI60_labs.csv",
                        header=0, index_col=0)
 
-# Labels to Numeric Vector of clusters
-ylabs = nci_labs.values[:, 0]
-labs_map = dict(zip(np.unique(ylabs), np.arange(np.unique(ylabs).size)))
-y = np.array([labs_map[lab] for lab in ylabs])
+# # Labels to Numeric Vector of clusters
+# ylabs = nci_labs.values[:, 0]
+# labs_map = dict(zip(np.unique(ylabs), np.arange(np.unique(ylabs).size)))
+# y = np.array([labs_map[lab] for lab in ylabs])
+
+# Agglomerative Clustering as ground truth
+plt.figure(figsize=(16,8))
+hc = linkage(y=nci_data.values, method="complete", metric='euclidean')
+dendrogram(hc, labels=nci_labs.x.values, leaf_rotation=0, leaf_font_size=8,
+           orientation='left')
+plt.savefig("dendrogram.png")
+
+y = cut_tree(hc, n_clusters=4)[:, 0]
+
 
 # Look for h parameter
 lSL = LeadersSingleLink()
