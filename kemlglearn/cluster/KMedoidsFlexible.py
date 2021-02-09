@@ -6,10 +6,8 @@ KMedoidsFlexible
 
 :Description: KMedoidsFlexible
 
-    
 
 :Authors: bejar
-    
 
 :Version: 
 
