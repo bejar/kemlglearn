@@ -21,7 +21,6 @@ __author__ = 'bejar'
 
 import numpy as np
 from sklearn.base import BaseEstimator
-from kemlglearn.metrics.cluster import within_scatter_matrix_score
 from sklearn.cluster import KMeans
 
 class quantization_error(BaseEstimator):

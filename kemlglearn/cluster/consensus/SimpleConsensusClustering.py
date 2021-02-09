@@ -22,7 +22,6 @@ __author__ = 'bejar'
 
 import numpy as np
 from sklearn.base import BaseEstimator, ClusterMixin, TransformerMixin
-from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.cluster import KMeans, SpectralClustering
 from numpy.random import randint
 
