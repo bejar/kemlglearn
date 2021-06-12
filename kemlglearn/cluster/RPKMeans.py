@@ -396,8 +396,10 @@ class RPKMeans(BaseEstimator, ClusterMixin, ClassifierMixin):
         l2distances = cdist(X, self.centroids)
         return np.argmin(l2distances, axis=1)
 
+
 def inttobin(value, n_dim):
     return (value & (2**np.arange(n_dim))) > 0
+
 
 def bintoint(value, n_dim):
     return (value*2**np.arange(n_dim)).sum(axis=1)
