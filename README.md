@@ -11,3 +11,4 @@ Some of the algorithms are from other authors:
 
 KernelKMeans by Mathieu Blondel <mathieu@mblondel.org> https://gist.github.com/mblondel/6230787
 KModes and KPrototypes by Nico de Vos <njdevos@gmail.com> https://github.com/nicodv/kmodes
+RPKMeans by Victor Badenas <victor.badenas@gmail.com> https://github.com/vbadenas/RPKMeans
