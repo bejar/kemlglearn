@@ -1,10 +1,13 @@
-kemlglearn 0.3.15
-=================
+kemlglearn
+==========
 
-Different Machine learning algorithms in python trying 
-to follow the interfaces of scikit-learn
+Different ML and preprocesing algorithms in python specially for clustering 
 
-Still in the initial phase
+Trying to follow the interfaces of scikit-learn
+
+Just for teaching purposes, most of the algorithms are not implemented efficiently
+
+Some of the algorithms are from other authors:
 
 KernelKMeans by Mathieu Blondel <mathieu@mblondel.org> https://gist.github.com/mblondel/6230787
 

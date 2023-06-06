@@ -20,7 +20,7 @@ LaplacianScore
 __author__ = 'bejar'
 
 import numpy as np
-from sklearn.neighbors import kneighbors_graph, NearestNeighbors
+from sklearn.neighbors import kneighbors_graph
 from operator import itemgetter
 
 class LaplacianScore():

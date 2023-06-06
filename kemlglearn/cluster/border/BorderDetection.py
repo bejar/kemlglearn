@@ -22,6 +22,7 @@ __author__ = 'bejar'
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
 
+
 def QiuCaoBorder(X, n_neighbors, boundary_ratio, filter_ratio):
     """
     Compute the border points of the clusters from the dataset as described in:

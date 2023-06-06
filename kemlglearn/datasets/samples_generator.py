@@ -19,7 +19,6 @@ samples_generator
 
 __author__ = 'bejar'
 
-# from rpy2.robjects.packages import importr
 import numpy as np
 import numbers
 from sklearn.utils import check_random_state, check_array

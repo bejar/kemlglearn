@@ -19,12 +19,14 @@ SimpleConsensusClustering
 
 __author__ = 'bejar'
 
-
 import numpy as np
 from sklearn.base import BaseEstimator, ClusterMixin, TransformerMixin
-from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.cluster import KMeans, SpectralClustering
 from numpy.random import randint
+from itertools import product
+from joblib import Parallel, delayed
+from scipy.sparse import csc_matrix
+
 
 class SimpleConsensusClustering(BaseEstimator, ClusterMixin, TransformerMixin):
     """Simple Consensus Clustering Algorithm
@@ -41,6 +43,7 @@ class SimpleConsensusClustering(BaseEstimator, ClusterMixin, TransformerMixin):
         consensus method ['coincidence']
 
     """
+
     def __init__(self, n_clusters, n_clusters_base=None, ncb_rand=False, base='kmeans', n_components=10,
                  consensus='coincidence', consensus2='kmeans'):
         self.n_clusters = n_clusters
@@ -57,16 +60,29 @@ class SimpleConsensusClustering(BaseEstimator, ClusterMixin, TransformerMixin):
         self.consensus = consensus
         self.consensus2 = consensus2
 
-
     def fit(self, X):
         """
         Clusters the examples
         :param X:
         :return:
         """
-
         if self.consensus == 'coincidence':
             self.cluster_centers_, self.labels_ = self._fit_process_coincidence(X)
+
+    def _process_components(self, ncl, base, X):
+        """
+
+        :param num:
+        :return:
+        """
+        if base == 'kmeans':
+            km = KMeans(n_clusters=ncl, n_init=1, init='random')
+        elif base == 'spectral':
+            km = SpectralClustering(n_clusters=ncl, assign_labels='discretize',
+                                    affinity='nearest_neighbors', n_neighbors=30)
+        km.fit(X)
+
+        return km.labels_
 
     def _fit_process_coincidence(self, X):
         """
@@ -76,37 +92,23 @@ class SimpleConsensusClustering(BaseEstimator, ClusterMixin, TransformerMixin):
         :param X:
         :return:
         """
-        baseclust = []
-
-        for i in range(self.n_components):
-            ncl = self.n_clusters_base if self.ncb_rand else randint(2, self.n_clusters_base+1)
-            if self.base == 'kmeans':
-                km = KMeans(n_clusters=ncl, n_init=1, init='random')
-            elif self.base == 'spectral':
-                km = SpectralClustering(n_clusters=ncl, assign_labels='discretize',
-                                        affinity='nearest_neighbors', n_neighbors=30)
-            km.fit(X)
-            baseclust.append(km.labels_)
+        clabels = Parallel(n_jobs=-1)(delayed(self._process_components)(
+            self.n_clusters_base if self.ncb_rand else randint(2, self.n_clusters_base + 1),
+            self.base,
+            X) for i in range(self.n_components))
 
         coin_matrix = np.zeros((X.shape[0], X.shape[0]))
-
-        for l in baseclust:
-            for i in range(X.shape[0]):
-                coin_matrix[i, i] += 1
-                for j in range(i+1, X.shape[0]):
-                    #if i != j:
-                        if l[i] == l[j]:
-                            coin_matrix[i, j] += 1
-                            coin_matrix[j, i] += 1
+        for l in clabels:
+            coin_matrix += (l[None, :] == l[:, None])
 
         coin_matrix /= self.n_components
         if self.consensus2 == 'kmeans':
-            kmc = KMeans(n_clusters=self.n_clusters, n_jobs=-1)
+            kmc = KMeans(n_clusters=self.n_clusters)
             kmc.fit(coin_matrix)
             return kmc.cluster_centers_, kmc.labels_
         elif self.consensus2 == 'spectral':
             kmc = SpectralClustering(n_clusters=self.n_clusters, assign_labels='discretize',
-                                    affinity='nearest_neighbors', n_neighbors=40)
+                                     affinity='nearest_neighbors', n_neighbors=40)
             kmc.fit(coin_matrix)
 
             return None, kmc.labels_
@@ -117,7 +119,7 @@ if __name__ == '__main__':
     from sklearn.metrics import adjusted_mutual_info_score
     from kemlglearn.datasets import make_blobs
     import matplotlib.pyplot as plt
-
+    import time
 
     # data = datasets.load_iris()['data']
     # labels = datasets.load_iris()['target']
@@ -127,10 +129,11 @@ if __name__ == '__main__':
 
     km = KMeans(n_clusters=2)
 
-    cons = SimpleConsensusClustering(n_clusters=2, n_clusters_base=20, n_components=50, ncb_rand=False)
-
+    cons = SimpleConsensusClustering(n_clusters=2, n_clusters_base=20, n_components=1000, ncb_rand=False)
     lkm = km.fit_predict(data)
+    t = time.time()
     cons.fit(data)
+    print('T=', time.time() - t)
     lcons = cons.labels_
 
     print(adjusted_mutual_info_score(lkm, labels))
@@ -142,10 +145,10 @@ if __name__ == '__main__':
     # pl.scatter(X[:, 1], X[:, 2], zs=X[:, 0], c=ld.labels_, s=25)
     #
     ax = fig.add_subplot(131)
-    plt.scatter(data[:,0],data[:,1],c=labels)
+    plt.scatter(data[:, 0], data[:, 1], c=labels)
     ax = fig.add_subplot(132)
-    plt.scatter(data[:,0],data[:,1],c=lkm)
+    plt.scatter(data[:, 0], data[:, 1], c=lkm)
     ax = fig.add_subplot(133)
-    plt.scatter(data[:,0],data[:,1],c=lcons)
+    plt.scatter(data[:, 0], data[:, 1], c=lcons)
 
     plt.show()

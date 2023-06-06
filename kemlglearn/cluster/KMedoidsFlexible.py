@@ -6,26 +6,20 @@ KMedoidsFlexible
 
 :Description: KMedoidsFlexible
 
-    
 
 :Authors: bejar
-    
 
 :Version: 
 
 :Created on: 18/12/2017 10:45 
 
 """
-
-from __future__ import division
-
-__author__ = 'bejar'
-
 from sklearn.base import BaseEstimator, ClusterMixin, TransformerMixin
 from sklearn.metrics.pairwise import euclidean_distances
 from numpy.random import choice
 import numpy as np
 
+__author__ = 'bejar'
 
 class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
     """K-Medoids algorithm with distance as a parameter
