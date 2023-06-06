@@ -103,7 +103,7 @@ class SimpleConsensusClustering(BaseEstimator, ClusterMixin, TransformerMixin):
 
         coin_matrix /= self.n_components
         if self.consensus2 == 'kmeans':
-            kmc = KMeans(n_clusters=self.n_clusters)
+            kmc = KMeans(n_clusters=self.n_clusters, n_init='auto')
             kmc.fit(coin_matrix)
             return kmc.cluster_centers_, kmc.labels_
         elif self.consensus2 == 'spectral':
